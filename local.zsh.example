@@ -16,9 +16,9 @@
 # [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
 # [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
 
-# --- Rust / cargo (LinkedIn VM: corp artifactory mirror) ---
-# export RUSTUP_DIST_SERVER=https://artifactory.corp.linkedin.com:8083/artifactory/rustup-remote
-# export RUSTUP_UPDATE_ROOT=https://artifactory.corp.linkedin.com:8083/artifactory/rustup-remote/rustup
+# --- Rust / cargo (point at your internal mirror if you have one) ---
+# export RUSTUP_DIST_SERVER=https://your-internal-mirror.example.com/rustup
+# export RUSTUP_UPDATE_ROOT=https://your-internal-mirror.example.com/rustup/rustup
 # [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 # --- misc PATH ---
