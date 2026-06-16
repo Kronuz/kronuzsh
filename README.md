@@ -24,37 +24,50 @@ and prefer zsh-native over a vendored module (e.g. bracketed paste is built in, 
 there's no `safe-paste`). No cryptic framework magic; if you want to change
 something, the file it lives in is obvious.
 
+## Fonts (Nerd Font)
+
+The prompt uses a few [Nerd Font](https://www.nerdfonts.com/) glyphs (the OS logo
+by the hostname). Install any Nerd Font and point your terminal at it — e.g.
+[MesloLGS Nerd Font](https://github.com/ryanoasis/nerd-fonts):
+
+- macOS: `brew install --cask font-meslo-lg-nerd-font`, then set it as your
+  terminal font.
+- **iTerm2 gotcha**: also set it (or uncheck) under *Settings → Profiles → Text →
+  "Use a different font for non-ASCII text"* — otherwise the glyphs show as boxes
+  even with the right main font.
+
+Without a Nerd Font the prompt still works; the OS logo just shows as tofu (□) —
+set `_kronuz_os=''` in `local.zsh` to hide it.
+
 ## Install
 
 ```bash
 git clone --recursive https://github.com/Kronuz/kronuzsh.git ~/.config/kronuzsh
-# back up your current rc files, then symlink zsh at this repo's:
-mv ~/.zshrc  ~/.zshrc.bak  2>/dev/null
-mv ~/.zshenv ~/.zshenv.bak 2>/dev/null
-ln -s ~/.config/kronuzsh/env.zsh  ~/.zshenv   # env for all shells
-ln -s ~/.config/kronuzsh/init.zsh ~/.zshrc    # interactive layer
+cd ~/.config/kronuzsh && ./install.sh
 exec zsh
 ```
 
-(Symlinks, so editing `~/.zshrc` edits the tracked `init.zsh` directly; `$KRONUZSH`
-self-resolves through the symlink. `init.zsh` also sources `env.zsh`, so the
-`~/.zshenv` link is optional, just recommended so non-interactive shells get
-`$EDITOR` etc. too.)
-
-If you already cloned without `--recursive`:
-`git submodule update --init --recursive`.
+`install.sh` symlinks the runcoms (`~/.zshenv`, `~/.zshrc`, `~/.zprofile`,
+`~/.zlogin`, `~/.zlogout`) at this repo's `runcoms/`, backing up anything it
+replaces, and inits the plugin submodules. It's idempotent; `./install.sh
+--uninstall` restores the backups. Symlinks mean editing `~/.zshrc` edits the
+tracked `runcoms/zshrc` directly, and `$KRONUZSH` self-resolves through them.
 
 ## Machine-local config
 
-Anything machine-specific or corp-internal (tool hooks, private URLs, PATH
-tweaks) stays out of the repo. Copy the template and edit it; the real file is
-git-ignored:
+Two tiers, by language:
 
-```bash
-cp ~/.config/kronuzsh/local.zsh.example ~/.config/kronuzsh/local.zsh
-```
+- **`~/.profile`** — cross-shell env (PATH, exports) in POSIX **sh**, shared by
+  bash, sh, and zsh; `runcoms/zprofile` sources it for zsh login shells.
+- **`local.zsh`** — zsh-only machine tweaks (zstyles, the `PROMPT_KRONUZ_COLOR_HOST`
+  override, the `_kronuz_os` glyph, tool hooks like `direnv`). Copy the template;
+  it's git-ignored:
 
-`init.zsh` also sources `~/.zshrc.local` if present.
+  ```bash
+  cp ~/.config/kronuzsh/local.zsh.example ~/.config/kronuzsh/local.zsh
+  ```
+
+`~/.zshrc.local` is also sourced if present. `/etc/profile` is left to the system.
 
 ## gitstatusd (the git prompt engine)
 
@@ -78,16 +91,21 @@ into `~/.cache/gitstatus/` (from GitHub releases). Nothing is committed here.
 ## Layout
 
 ```
-env.zsh            environment, for all shells (your ~/.zshenv sources this)
-init.zsh           interactive entry point (your ~/.zshrc sources this)
+install.sh         idempotent symlink installer (--uninstall restores backups)
+runcoms/
+  zshenv           environment, all shells   (~/.zshenv)
+  zprofile         login: sources ~/.profile (~/.zprofile)
+  zshrc            interactive entry point   (~/.zshrc)
+  zlogin           login: bg-compiles the completion dump
+  zlogout          logout (stub)
 options.zsh        shell options
 history.zsh        history (HISTSIZE 10M)
 completion.zsh     completion (cached compinit)
 keybindings.zsh    key bindings (emacs)
 aliases.zsh        the useful aliases (ls colors, ll, mkdir -p, ...)
 terminal.zsh       window/tab title
+prompt.zsh         the Kronuz prompt (OS glyph, gitstatus, ...)
 plugins.zsh        plugin loader
-prompt.zsh         the Kronuz prompt
 local.zsh.example  machine-local template (real local.zsh is git-ignored)
 plugins/           vendored plugins (git submodules)
 ```
