@@ -22,5 +22,5 @@ setopt HIST_NO_STORE             # Don't store the `history` command itself.
 setopt HIST_NO_FUNCTIONS         # Don't store function definitions.
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording.
 
-# Skip very short (likely accidental) commands.
+# Don't store large (3+ line) commands — usually pasted blobs, not worth keeping.
 zshaddhistory() { (( ${#${(f)1}} < 3 )) }
