@@ -5,3 +5,7 @@
 /.zhistory
 .zcompdump*
 *.zwc
+
+# stray history
+.zsh_history
+.zhistory

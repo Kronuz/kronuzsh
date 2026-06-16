@@ -1,0 +1,8 @@
+# Login-shell setup, sourced after zshrc.
+#
+# Background-compile the completion dump so the next shell starts a touch faster.
+# Runs in a backgrounded subshell so it never delays your prompt.
+{
+  zdump="${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump"
+  [[ -s "$zdump" && ( ! -s "$zdump.zwc" || "$zdump" -nt "$zdump.zwc" ) ]] && zcompile "$zdump"
+} &!

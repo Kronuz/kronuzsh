@@ -1,14 +1,14 @@
 # kronuzsh: a lean, prezto-free zsh setup.
-# Entry point. Point your ~/.zshrc at this file:
-#   source ~/Development/kronuzsh/init.zsh
+# Interactive entry point. Symlinked from ~/.zshrc -> runcoms/zshrc.
 #
 # Author: Germán Méndez Bravo (Kronuz) <german.mb@gmail.com>
 
-# Resolve this repo's directory regardless of how we were sourced.
-KRONUZSH="${KRONUZSH:-${${(%):-%x}:A:h}}"
+# Resolve the repo root. This file lives in runcoms/, so climb out twice (:h:h),
+# resolving symlinks first (:A) since ~/.zshrc is a symlink to here.
+KRONUZSH="${KRONUZSH:-${${(%):-%x}:A:h:h}}"
 export KRONUZSH
 
-source "$KRONUZSH/env.zsh"
+source "$KRONUZSH/runcoms/zshenv"   # also sourced by ~/.zshenv; harmless to repeat
 source "$KRONUZSH/options.zsh"
 source "$KRONUZSH/history.zsh"
 source "$KRONUZSH/completion.zsh"

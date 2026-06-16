@@ -355,6 +355,15 @@ function prompt_kronuz_setup {
   _prompt_kronuz_git=''
   _prompt_kronuz_pwd=''
 
+  # OS glyph (Nerd Font): apple on macOS, Tux on Linux. Override in local.zsh,
+  # e.g. `_kronuz_os=$'\uf31a'` (the other Tux) or `_kronuz_os=''` to hide it.
+  typeset -g _kronuz_os=''
+  case "$OSTYPE" in
+    darwin*) _kronuz_os=$'\uf179' ;;
+    linux*)  _kronuz_os=$'\uf17c' ;;
+  esac
+  DEFAULT_PROMPT_KRONUZ_OS="\${_kronuz_os:+\"$col[host]\${_kronuz_os}$col[none] \"}"
+
   DEFAULT_PROMPT_KRONUZ_ERR="%(?.$col[status_ok]•$col[none].$col[status_err]•$col[none])"
   DEFAULT_PROMPT_KRONUZ_ERROR="%(?.. $col[status_err]⏎ %?$col[none])"
   DEFAULT_PROMPT_KRONUZ_VIM="\${VIM:+\" $col[vim]V$col[none]\"}"
@@ -372,6 +381,7 @@ function prompt_kronuz_setup {
   unset kronuz
   typeset -gA kronuz
   kronuz[nl]=$'%E\n'
+  kronuz[os]="\${(e)PROMPT_KRONUZ_OS:-\$DEFAULT_PROMPT_KRONUZ_OS}"
   kronuz[err]="\${(e)PROMPT_KRONUZ_ERR:-\$DEFAULT_PROMPT_KRONUZ_ERR}"
   kronuz[error]="\${(e)PROMPT_KRONUZ_ERROR:-\$DEFAULT_PROMPT_KRONUZ_ERROR}"
   kronuz[vim]="\${(e)PROMPT_KRONUZ_VIM:-\$DEFAULT_PROMPT_KRONUZ_VIM}"
@@ -389,5 +399,5 @@ function prompt_kronuz_setup {
 
   SPROMPT='zsh: correct $col[red]%R%f to $col[green]%r%f [nyae]? '
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
-  PROMPT="$kronuz[err]$kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[error]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
+  PROMPT="$kronuz[os]$kronuz[err]$kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[error]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
 }

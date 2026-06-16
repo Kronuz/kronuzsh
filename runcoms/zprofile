@@ -1,0 +1,6 @@
+# Login-shell setup. Sourced for login shells, before zshrc.
+#
+# Cross-shell machine env (PATH and exports that bash, sh, and zsh should all
+# share) belongs in ~/.profile, in POSIX sh syntax. bash and sh read it natively
+# as login shells; source it here so zsh login shells get it too.
+[[ -r "$HOME/.profile" ]] && source "$HOME/.profile"

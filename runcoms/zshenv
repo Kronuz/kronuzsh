@@ -1,5 +1,5 @@
-# env.zsh: environment, for ALL shells (sourced via ~/.zshenv).
-# Keep this generic; machine-specific PATH/exports go in local.zsh.
+# Environment, for ALL shells. Symlinked from ~/.zshenv -> runcoms/zshenv.
+# Keep this generic; machine-specific PATH/exports go in local.zsh or ~/.profile.
 
 export EDITOR=vim
 export VISUAL=vim
