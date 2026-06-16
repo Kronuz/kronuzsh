@@ -101,7 +101,7 @@ runcoms/
 options.zsh        shell options
 history.zsh        history (HISTSIZE 10M)
 completion.zsh     completion (cached compinit)
-keybindings.zsh    key bindings (emacs)
+keybindings.zsh    key bindings (emacs; word nav, Ctrl-W to last slash)
 aliases.zsh        the useful aliases (ls colors, ll, mkdir -p, ...)
 terminal.zsh       window/tab title
 prompt.zsh         the Kronuz prompt (OS glyph, gitstatus, ...)
