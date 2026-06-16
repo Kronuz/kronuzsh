@@ -394,10 +394,10 @@ function prompt_kronuz_setup {
   kronuz[prompt]="\${(e)PROMPT_KRONUZ_PROMPT:-\$DEFAULT_PROMPT_KRONUZ_PROMPT}"
   kronuz[time]="$col[time]\${(e)PROMPT_KRONUZ_TIME:-\$DEFAULT_PROMPT_KRONUZ_TIME}$col[none]"
   kronuz[pwd]="$col[pwd]\${(e)PROMPT_KRONUZ_PWD:-\$DEFAULT_PROMPT_KRONUZ_PWD}$col[none]"
-  kronuz[host]="$col[host]%M$col[none] $col[ip](\${(e)PROMPT_KRONUZ_IP:-\$DEFAULT_PROMPT_KRONUZ_IP})$col[none]"
+  kronuz[host]="$kronuz[os]$col[host]%M$col[none] $col[ip](\${(e)PROMPT_KRONUZ_IP:-\$DEFAULT_PROMPT_KRONUZ_IP})$col[none]"
   kronuz[info]="$kronuz[user] at $kronuz[host]"
 
   SPROMPT='zsh: correct $col[red]%R%f to $col[green]%r%f [nyae]? '
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
-  PROMPT="$kronuz[os]$kronuz[err]$kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[error]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
+  PROMPT="$kronuz[err]$kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[error]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
 }
