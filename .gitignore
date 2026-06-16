@@ -1,0 +1,7 @@
+# Machine-local, never committed.
+/local.zsh
+
+# Per-machine runtime state.
+/.zhistory
+.zcompdump*
+*.zwc

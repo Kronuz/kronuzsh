@@ -1,0 +1,25 @@
+# Machine-local config. Copy to local.zsh (git-ignored) and adapt per machine.
+# Keep machine-specific paths and CORP-INTERNAL urls here, NOT in the repo.
+
+# COLORTERM is universal enough to keep in the repo, but tool hooks below
+# differ per machine and error out if the tool isn't installed.
+
+# --- direnv ---
+# command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+
+# --- Volta (node) ---
+# export VOLTA_HOME="$HOME/.volta"
+# export PATH="$VOLTA_HOME/bin:$PATH"
+
+# --- nvm ---
+# export NVM_DIR="$HOME/.nvm"
+# [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+# [[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+
+# --- Rust / cargo (LinkedIn VM: corp artifactory mirror) ---
+# export RUSTUP_DIST_SERVER=https://artifactory.corp.linkedin.com:8083/artifactory/rustup-remote
+# export RUSTUP_UPDATE_ROOT=https://artifactory.corp.linkedin.com:8083/artifactory/rustup-remote/rustup
+# [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+# --- misc PATH ---
+# export PATH="$HOME/.local/bin:$PATH"

@@ -1,0 +1,12 @@
+[submodule "plugins/fast-syntax-highlighting"]
+	path = plugins/fast-syntax-highlighting
+	url = https://github.com/zdharma-continuum/fast-syntax-highlighting
+[submodule "plugins/zsh-autosuggestions"]
+	path = plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "plugins/zsh-history-substring-search"]
+	path = plugins/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search
+[submodule "plugins/gitstatus"]
+	path = plugins/gitstatus
+	url = https://github.com/romkatv/gitstatus
