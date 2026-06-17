@@ -93,115 +93,39 @@ into `~/.cache/gitstatus/` (from GitHub releases). Nothing is committed here.
 
 ## External tools
 
-A handful of modern CLI tools get wired in automatically **when they're
-installed**, and are silently skipped when they aren't, so the same config works
-on your laptop, a fresh box, or a server with none of them. What each gets you,
-all guarded on the command being present (`integrations.zsh`, except delta which
-lives in git config):
+kronuzsh wires in a set of modern CLI tools **when they're installed**, and
+silently skips them when they aren't, so the same config works on your laptop, a
+fresh box, or a server with none of them. The wired set (fzf, fd, zoxide, bat,
+ripgrep, git-delta, eza, atuin, yazi) gets key bindings, aliases, env, or git
+config; a longer list of "just run them" tools (lazygit, jq, dust, btop, ...) is
+worth having too.
 
-- **[fzf](https://github.com/junegunn/fzf)** — fuzzy finder. The modern
-  `fzf --zsh` integration binds **Ctrl-T** (insert a file path), **Ctrl-R**
-  (search history; this takes over from the plain incremental search), and
-  **Alt-C** (cd into a chosen directory). Colored from the Kronuz palette.
-- **[fd](https://github.com/sharkdp/fd)** — a friendlier `find`, and the engine
-  behind fzf's file/dir pickers (hidden files, follows symlinks, skips `.git`).
-- **[zoxide](https://github.com/ajeetdsouza/zoxide)** — a `cd` that learns your
-  most-used dirs. Adds `z` (jump) and `zi` (interactive); the real `cd` is left
-  alone.
-- **[bat](https://github.com/sharkdp/bat)** — a syntax-highlighting pager, used
-  as the **man pager** and fzf's file preview. It does **not** shadow `cat`.
-  Themed: `install.sh` builds bat's cache with the bundled Kronuz theme
-  (`bat/themes/Kronuz.tmTheme`) and `integrations.zsh` sets `BAT_THEME=Kronuz`.
-- **[ripgrep](https://github.com/BurntSushi/ripgrep)** (`rg`) — a fast `grep`;
-  nothing to wire, it just works. Point `$RIPGREP_CONFIG_PATH` at a config in
-  `local.zsh` for defaults.
-- **[git-delta](https://github.com/dandavison/delta)** — a syntax-highlighting
-  pager for git diffs. `install.sh` sets it in your **global gitconfig** (so you
-  get `navigate`, line numbers, and `git add -p` highlighting, not just paging),
-  guarded with `command -v delta` so it falls back to `less`/`cat` where delta
-  isn't installed. It reads the same bat cache, so it uses the Kronuz syntax
-  theme too. To set it up without re-running the installer:
-
-  ```bash
-  git config --global core.pager \
-    'if command -v delta >/dev/null 2>&1; then delta; else less; fi'
-  git config --global interactive.diffFilter \
-    'if command -v delta >/dev/null 2>&1; then delta --color-only; else cat; fi'
-  git config --global delta.navigate true
-  git config --global delta.line-numbers true
-  git config --global delta.syntax-theme Kronuz   # needs bat's cache built
-  ```
-
-The colored tools share one **Kronuz** look (from
-[Kronuz-Theme](https://github.com/Kronuz/Kronuz-Theme)): eza via `eza/theme.yml`,
-bat + delta via the `bat/themes/Kronuz.tmTheme` cache, and fzf via its `--color`.
-
-### Installing them
-
-Per platform (the package names differ, which bites on minimal distros):
+**See [Integrations.md](Integrations.md) for the full catalog** — what each tool
+does, the classic command it replaces, the per-platform install matrix, and the
+shared Kronuz theming. The quick install:
 
 ```bash
 # macOS
-brew install fd bat fzf zoxide ripgrep git-delta
+brew install fd bat fzf zoxide ripgrep git-delta eza atuin yazi
 
-# Debian / Ubuntu  (fd installs as `fdfind`, bat as `batcat` — integrations.zsh
-# detects both)
+# Debian / Ubuntu  (fd installs as `fdfind`, bat as `batcat`; init.zsh detects both)
 sudo apt install fd-find bat fzf zoxide ripgrep git-delta
 
 # Fedora
 sudo dnf install fd-find bat fzf zoxide ripgrep git-delta
 ```
 
-On a **minimal or locked-down distro** whose repos don't carry them (e.g. the
-CBL-Mariner dev VM, which only ships `ripgrep`), install from source with Rust,
-and grab fzf's prebuilt binary (it's Go, not Rust):
+On a minimal or locked-down distro that lacks them (e.g. the CBL-Mariner dev VM,
+which only ships `ripgrep`), install via Rust (`cargo install --locked fd-find
+bat zoxide git-delta eza`) and grab fzf's prebuilt Go binary; the exact commands
+are in [Integrations.md](Integrations.md#installing-them).
 
-```bash
-cargo install --locked fd-find bat zoxide git-delta    # -> ~/.cargo/bin
-ver=$(curl -sSL https://api.github.com/repos/junegunn/fzf/releases/latest \
-      | grep -m1 tag_name | sed -E 's/.*"v?([^"]+)".*/\1/')
-curl -sSL "https://github.com/junegunn/fzf/releases/download/v$ver/fzf-$ver-linux_amd64.tar.gz" \
-      | tar xz -C ~/.local/bin fzf                      # -> ~/.local/bin
-```
+The colored tools (eza, bat, delta, fzf) share one **Kronuz** look from
+[Kronuz-Theme](https://github.com/Kronuz/Kronuz-Theme), bundled under
+`integrations/` (`eza/theme.yml`, `bat/themes/Kronuz.tmTheme`, and fzf's
+`--color`). The wiring is in `integrations/init.zsh` (per-shell) and
+`integrations/setup.sh` (one-time: bat's theme cache + delta's gitconfig).
 
-(`~/.cargo/bin` and `~/.local/bin` both need to be on `$PATH`; they usually are.)
-
-### More tools worth adding
-
-These need no shell wiring (they're just commands), so they aren't in
-`integrations.zsh`; install any and they work. Roughly ranked by daily payoff:
-
-1. **[eza](https://github.com/eza-community/eza)** — a modern `ls` (icons, git,
-   tree). *Wired*: when present it takes over the `ls`/`ll`/`la`/`lt` aliases
-   (plus `llg`/`lag` for the slower git column), and uses the bundled Kronuz
-   color theme (`eza/theme.yml`, from the Kronuz VSCode palette; override with
-   `EZA_CONFIG_DIR` in `local.zsh`).
-2. **[lazygit](https://github.com/jesseduffield/lazygit)** — a terminal git UI
-   for staging, rebasing, and stashing; uses your delta config.
-3. **[hyperfine](https://github.com/sharkdp/hyperfine)** — command-line
-   benchmarking with statistics (same author as fd/bat).
-4. **[atuin](https://github.com/atuinsh/atuin)** — SQLite shell history with
-   fuzzy search. *Wired*: when present it owns **Ctrl-R** (replacing fzf's), and
-   we keep Up/Down on the substring search.
-5. **[jq](https://github.com/jqlang/jq)** / **[yq](https://github.com/mikefarah/yq)**
-   — slice and reshape JSON / YAML.
-6. **[dust](https://github.com/bootandy/dust)** (`du`) and
-   **[duf](https://github.com/muesli/duf)** (`df`) — readable disk usage.
-7. **[btop](https://github.com/aristocratos/btop)** (`top`) and
-   **[procs](https://github.com/dalance/procs)** (`ps`) — nicer process views.
-8. **[sd](https://github.com/chmln/sd)** — `sed`-style find/replace, minus the
-   regex pain.
-9. **[tealdeer](https://github.com/tealdeer-rs/tealdeer)** (`tldr`) —
-   example-first man pages.
-10. **[yazi](https://github.com/sxyazi/yazi)** — a fast terminal file manager.
-    *Wired*: when present, `y` opens it and cd's to where you quit.
-11. **[tokei](https://github.com/XAMPPRocky/tokei)** (count lines of code),
-    **[glow](https://github.com/charmbracelet/glow)** (render Markdown),
-    **[xh](https://github.com/ducaale/xh)** (a fast HTTPie/`curl`).
-
-Most are Rust, so `cargo install <crate>` works anywhere Rust does (the minimal
-distro path above). The three marked *Wired* get shell integration in
-`integrations.zsh`; the rest just run.
 
 ## Layout
 
@@ -219,11 +143,16 @@ completion.zsh     completion (cached compinit)
 keybindings.zsh    key bindings (emacs; word nav, Ctrl-W to last slash)
 aliases.zsh        the useful aliases (ls colors, ll, mkdir -p, ...)
 terminal.zsh       window/tab title
-integrations.zsh   optional external tools (fzf, fd, zoxide, bat, eza), guarded
-eza/theme.yml      Kronuz color theme for eza (loaded via $EZA_CONFIG_DIR)
-bat/themes/         Kronuz.tmTheme for bat + delta (built into bat's cache)
+integrations/      optional external tools, guarded (see Integrations.md)
+  init.zsh           per-shell wiring (fzf, fd, zoxide, bat, eza, ...), sourced by zshrc
+  setup.sh           one-time setup: bat theme cache + git-delta gitconfig
+  eza/theme.yml      Kronuz color theme for eza (loaded via $EZA_CONFIG_DIR)
+  bat/themes/        Kronuz.tmTheme for bat + delta (built into bat's cache)
 prompt.zsh         the Kronuz prompt (OS glyph, gitstatus, ...)
 plugins.zsh        plugin loader
 local.zsh.example  machine-local template (real local.zsh is git-ignored)
 plugins/           vendored plugins (git submodules)
 ```
+
+Topic docs: **[Integrations.md](Integrations.md)** (the external-tool catalog) and
+**[NerdFonts.md](NerdFonts.md)** (font rankings + setup).

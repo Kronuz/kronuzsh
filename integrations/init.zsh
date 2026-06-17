@@ -1,9 +1,11 @@
-# integrations.zsh: wire up optional external CLI tools when they're installed.
-# Every block is guarded on the command existing, so a machine missing a tool
-# just skips it and the shell still works everywhere (the VM, a fresh box, ...).
+# integrations/init.zsh: wire up optional external CLI tools when installed.
+# Sourced by runcoms/zshrc at interactive startup. Every block is guarded on the
+# command existing, so a machine missing a tool just skips it and the shell still
+# works everywhere (the VM, a fresh box, ...). The install-time half (bat cache,
+# delta gitconfig) lives next to this in integrations/setup.sh.
 #
-# Install per platform (package names differ; see the README for the full
-# matrix and a ranked list of more tools worth adding):
+# Install per platform (package names differ; see Integrations.md for the full
+# catalog, the install matrix, and a ranked list of more tools worth adding):
 #   macOS:           brew install fd bat fzf zoxide ripgrep git-delta
 #   Linux w/ Rust:   cargo install --locked fd-find bat zoxide git-delta ripgrep
 #   Debian/Ubuntu:   apt install fd-find bat fzf zoxide ripgrep git-delta
@@ -73,10 +75,10 @@ fi
 # before this). NB: `--git` is deliberately left off `ll`/`la` because it walks
 # git status per entry, which is slow in large/deep dirs; use `llg`/`lag` when
 # you actually want the git column. EZA_CONFIG_DIR points eza at our bundled
-# Kronuz theme (eza/theme.yml); override it in local.zsh for your own.
+# Kronuz theme (integrations/eza/theme.yml); override it in local.zsh for your own.
 # install: brew install eza · cargo install eza
 if (( $+commands[eza] )); then
-  export EZA_CONFIG_DIR="${EZA_CONFIG_DIR:-$KRONUZSH/eza}"
+  export EZA_CONFIG_DIR="${EZA_CONFIG_DIR:-$KRONUZSH/integrations/eza}"
   alias ls='eza --group-directories-first --classify=auto --icons=auto'
   alias l='eza -1a --group-directories-first --icons=auto'
   alias ll='eza -lh --group-directories-first --icons=auto'
@@ -116,11 +118,11 @@ fi
 # install: brew install ripgrep · cargo install ripgrep · apt/dnf install ripgrep
 #
 # git-delta is configured in git, not zsh (so you get navigate, line numbers,
-# and `git add -p` highlighting, not just the pager): install.sh sets it in your
-# global gitconfig, guarded with `command -v delta` so it falls back to less/cat
-# on a box without delta. See the README ("External tools").
+# and `git add -p` highlighting, not just the pager): integrations/setup.sh sets
+# it in your global gitconfig, guarded with `command -v delta` so it falls back to
+# less/cat on a box without delta. See Integrations.md ("External tools").
 # install: brew install git-delta · cargo install git-delta
 #
 # Plenty of other good tools need no shell wiring (they're just commands you run
 # directly): lazygit, hyperfine, jq/yq, dust, duf, btop, procs, tokei, sd, tldr
-# (tealdeer), glow, xh. See the README for the ranked list + install hints.
+# (tealdeer), glow, xh. See Integrations.md for the full catalog + install hints.
