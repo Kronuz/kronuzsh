@@ -94,15 +94,10 @@ into `~/.cache/gitstatus/` (from GitHub releases). Nothing is committed here.
 ## External tools
 
 A handful of modern CLI tools get wired in automatically **when they're
-installed**, and are silently skipped when they aren't (so the same config works
-on a fresh box or the server). Install the ones you want, e.g. on macOS:
-
-```bash
-brew install ripgrep fd fzf zoxide bat git-delta
-```
-
-What each gets you, all guarded on the command being present (`integrations.zsh`,
-except delta which lives in git config):
+installed**, and are silently skipped when they aren't, so the same config works
+on your laptop, a fresh box, or a server with none of them. What each gets you,
+all guarded on the command being present (`integrations.zsh`, except delta which
+lives in git config):
 
 - **[fzf](https://github.com/junegunn/fzf)** — fuzzy finder. The modern
   `fzf --zsh` integration binds **Ctrl-T** (insert a file path), **Ctrl-R**
@@ -132,6 +127,70 @@ except delta which lives in git config):
   git config --global delta.navigate true
   git config --global delta.line-numbers true
   ```
+
+### Installing them
+
+Per platform (the package names differ, which bites on minimal distros):
+
+```bash
+# macOS
+brew install fd bat fzf zoxide ripgrep git-delta
+
+# Debian / Ubuntu  (fd installs as `fdfind`, bat as `batcat` — integrations.zsh
+# detects both)
+sudo apt install fd-find bat fzf zoxide ripgrep git-delta
+
+# Fedora
+sudo dnf install fd-find bat fzf zoxide ripgrep git-delta
+```
+
+On a **minimal or locked-down distro** whose repos don't carry them (e.g. the
+CBL-Mariner dev VM, which only ships `ripgrep`), install from source with Rust,
+and grab fzf's prebuilt binary (it's Go, not Rust):
+
+```bash
+cargo install --locked fd-find bat zoxide git-delta    # -> ~/.cargo/bin
+ver=$(curl -sSL https://api.github.com/repos/junegunn/fzf/releases/latest \
+      | grep -m1 tag_name | sed -E 's/.*"v?([^"]+)".*/\1/')
+curl -sSL "https://github.com/junegunn/fzf/releases/download/v$ver/fzf-$ver-linux_amd64.tar.gz" \
+      | tar xz -C ~/.local/bin fzf                      # -> ~/.local/bin
+```
+
+(`~/.cargo/bin` and `~/.local/bin` both need to be on `$PATH`; they usually are.)
+
+### More tools worth adding
+
+These need no shell wiring (they're just commands), so they aren't in
+`integrations.zsh`; install any and they work. Roughly ranked by daily payoff:
+
+1. **[eza](https://github.com/eza-community/eza)** — a modern `ls` (icons, git,
+   tree). *Wired*: when present it takes over the `ls`/`ll`/`la`/`lt` aliases.
+2. **[lazygit](https://github.com/jesseduffield/lazygit)** — a terminal git UI
+   for staging, rebasing, and stashing; uses your delta config.
+3. **[hyperfine](https://github.com/sharkdp/hyperfine)** — command-line
+   benchmarking with statistics (same author as fd/bat).
+4. **[atuin](https://github.com/atuinsh/atuin)** — SQLite shell history with
+   fuzzy search. *Wired*: when present it owns **Ctrl-R** (replacing fzf's), and
+   we keep Up/Down on the substring search.
+5. **[jq](https://github.com/jqlang/jq)** / **[yq](https://github.com/mikefarah/yq)**
+   — slice and reshape JSON / YAML.
+6. **[dust](https://github.com/bootandy/dust)** (`du`) and
+   **[duf](https://github.com/muesli/duf)** (`df`) — readable disk usage.
+7. **[btop](https://github.com/aristocratos/btop)** (`top`) and
+   **[procs](https://github.com/dalance/procs)** (`ps`) — nicer process views.
+8. **[sd](https://github.com/chmln/sd)** — `sed`-style find/replace, minus the
+   regex pain.
+9. **[tealdeer](https://github.com/tealdeer-rs/tealdeer)** (`tldr`) —
+   example-first man pages.
+10. **[yazi](https://github.com/sxyazi/yazi)** — a fast terminal file manager.
+    *Wired*: when present, `y` opens it and cd's to where you quit.
+11. **[tokei](https://github.com/XAMPPRocky/tokei)** (count lines of code),
+    **[glow](https://github.com/charmbracelet/glow)** (render Markdown),
+    **[xh](https://github.com/ducaale/xh)** (a fast HTTPie/`curl`).
+
+Most are Rust, so `cargo install <crate>` works anywhere Rust does (the minimal
+distro path above). The three marked *Wired* get shell integration in
+`integrations.zsh`; the rest just run.
 
 ## Layout
 
