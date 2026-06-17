@@ -29,3 +29,7 @@ setopt PROMPT_SUBST PROMPT_PERCENT PROMPT_CR PROMPT_SP
 # Tracked example: local.zsh.example. Real file is git-ignored.
 [[ -r "$KRONUZSH/local.zsh" ]] && source "$KRONUZSH/local.zsh"
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+
+# An absent optional file above leaves $? = 1 (the failed `[[ -r ]]` test), which
+# the prompt would show as a bogus error on the very first prompt. End clean.
+true
