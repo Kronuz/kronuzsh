@@ -63,14 +63,19 @@ if (( $+commands[zoxide] )); then
   eval "$(zoxide init zsh)"
 fi
 
-# eza: a modern `ls` with colors, icons, and inline git status. When present it
-# takes over the ls aliases (overriding aliases.zsh, which loads before this).
+# eza: a modern `ls` with colors, icons, and (optionally) inline git status.
+# When present it takes over the ls aliases (overriding aliases.zsh, which loads
+# before this). NB: `--git` is deliberately left off `ll`/`la` because it walks
+# git status per entry, which is slow in large/deep dirs; use `llg`/`lag` when
+# you actually want the git column.
 # install: brew install eza · cargo install eza
 if (( $+commands[eza] )); then
   alias ls='eza --group-directories-first --classify=auto --icons=auto'
   alias l='eza -1a --group-directories-first --icons=auto'
-  alias ll='eza -lh --group-directories-first --icons=auto --git'
-  alias la='eza -lha --group-directories-first --icons=auto --git'
+  alias ll='eza -lh --group-directories-first --icons=auto'
+  alias la='eza -lha --group-directories-first --icons=auto'
+  alias llg='ll --git'   # long + git status (slower in big repos)
+  alias lag='la --git'
   alias lt='eza -T --level=2 --group-directories-first --icons=auto'   # tree
 fi
 
