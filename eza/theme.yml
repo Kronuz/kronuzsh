@@ -1,18 +1,18 @@
 # Kronuz palette for eza, derived from the Kronuz color scheme
-# (github.com/Kronuz/Kronuz-Theme). Tuned to be calm but varied: the CHROME
-# (perms/size/user/date) is neutral gray so the listing isn't a wash of one
-# hue, while filenames carry the color (gold dirs, green exec, blue links, and
-# per-type accents from the full palette). Nothing bold.
+# (github.com/Kronuz/Kronuz-Theme). This file themes eza's UI columns
+# (filekinds, perms, size, owner, dates, git) in calm, varied tones. Nothing
+# bold. NOTE: per-extension *filename* colors do NOT come from here, eza takes
+# those from $LS_COLORS / $EZA_COLORS (its built-in defaults are the loud bold
+# ones); set EZA_COLORS in local.zsh to recolor file extensions.
 #
 # eza auto-loads this when $EZA_CONFIG_DIR points at this directory;
 # integrations.zsh sets that to $KRONUZSH/eza. Edit freely, or point
 # EZA_CONFIG_DIR elsewhere in local.zsh to use your own.
 colourful: true
 
-# Filenames carry the color.
 filekinds:
   normal: {foreground: '#c8c6c5'}
-  directory: {foreground: '#e8bf6a'}      # gold (func)
+  directory: {foreground: '#e8bf6a'}      # gold
   symlink: {foreground: '#6e9cbe'}        # blue
   executable: {foreground: '#a5c261'}     # green
   pipe: {foreground: '#7a7775'}
@@ -22,22 +22,8 @@ filekinds:
   special: {foreground: '#caa473'}
   mount_point: {foreground: '#6089b4'}
 
-# Color files by category, so a listing has real variety.
-file_type:
-  image: {foreground: '#d687bf'}          # pink
-  video: {foreground: '#d0d0ff'}          # lavender
-  music: {foreground: '#219186'}          # teal
-  lossless: {foreground: '#219186'}
-  crypto: {foreground: '#da4939'}         # red
-  document: {foreground: '#9a9794'}
-  compressed: {foreground: '#cc7833'}     # orange
-  temp: {foreground: '#676867'}
-  compiled: {foreground: '#95815e'}
-  build: {foreground: '#9aa83a'}          # olive-green
-
-# Chrome stays neutral/dim so it doesn't dominate.
 perms:
-  user_read: {foreground: '#9a9794'}
+  user_read: {foreground: '#9aa83a'}
   user_write: {foreground: '#cc7833'}
   user_execute_file: {foreground: '#a5c261'}
   user_execute_other: {foreground: '#a5c261'}
@@ -47,7 +33,7 @@ perms:
   other_read: {foreground: '#676867'}
   other_write: {foreground: '#676867'}
   other_execute: {foreground: '#676867'}
-  special_user_file: {foreground: '#caa473'}
+  special_user_file: {foreground: '#7a7775'}
   special_other: {foreground: '#676867'}
   attribute: {foreground: '#7a7775'}
 
@@ -56,7 +42,7 @@ size:
   minor: {foreground: '#7a7775'}
   number_byte: {foreground: '#9a9794'}
   number_kilo: {foreground: '#a5c261'}
-  number_mega: {foreground: '#caa473'}
+  number_mega: {foreground: '#9aa83a'}
   number_giga: {foreground: '#cc7833'}
   number_huge: {foreground: '#da4939'}
   unit_byte: {foreground: '#7a7775'}
@@ -66,7 +52,7 @@ size:
   unit_huge: {foreground: '#7a7775'}
 
 users:
-  user_you: {foreground: '#caa473'}       # one warm spot
+  user_you: {foreground: '#9a9794'}       # calm neutral (was mustard)
   user_root: {foreground: '#da4939'}
   user_other: {foreground: '#7a7775'}
   group_yours: {foreground: '#7a7775'}
