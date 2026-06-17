@@ -36,6 +36,18 @@ install() {
     echo "linked  ~/.$rc -> $target"
   done
 
+  # bat / delta share one syntax theme: build bat's cache so the bundled Kronuz
+  # theme (bat/themes/Kronuz.tmTheme) registers. delta reads the same cache, so
+  # both pick it up. Debian ships bat as `batcat`; accept either.
+  _bat=""
+  command -v bat    >/dev/null 2>&1 && _bat=bat
+  [ -z "$_bat" ] && command -v batcat >/dev/null 2>&1 && _bat=batcat
+  if [ -n "$_bat" ]; then
+    if BAT_CONFIG_DIR="$here/bat" "$_bat" cache --build >/dev/null 2>&1; then
+      echo "built bat cache (Kronuz theme registered for bat + delta)"
+    fi
+  fi
+
   # git-delta: use it as git's diff pager and `git add -p` highlighter, guarded
   # with `command -v delta` so a box without delta falls back to less/cat. Set
   # in the global gitconfig (the env can't carry interactive.diffFilter), and
@@ -47,6 +59,13 @@ install() {
       'if command -v delta >/dev/null 2>&1; then delta --color-only; else cat; fi'
     git config --global delta.navigate true
     git config --global delta.line-numbers true
+    # Kronuz diff colors: warm-tinted add/remove backgrounds to match the theme.
+    git config --global delta.plus-style        'syntax #26331a'
+    git config --global delta.minus-style       'syntax #3a1d1d'
+    git config --global delta.plus-emph-style    'syntax #34471f'
+    git config --global delta.minus-emph-style   'syntax #57231f'
+    # Kronuz syntax highlighting in diffs, but only if bat built that theme.
+    [ -n "$_bat" ] && git config --global delta.syntax-theme Kronuz
     echo "configured git to use delta when available (falls back to less)"
   fi
 

@@ -102,7 +102,7 @@ lives in git config):
 - **[fzf](https://github.com/junegunn/fzf)** — fuzzy finder. The modern
   `fzf --zsh` integration binds **Ctrl-T** (insert a file path), **Ctrl-R**
   (search history; this takes over from the plain incremental search), and
-  **Alt-C** (cd into a chosen directory).
+  **Alt-C** (cd into a chosen directory). Colored from the Kronuz palette.
 - **[fd](https://github.com/sharkdp/fd)** — a friendlier `find`, and the engine
   behind fzf's file/dir pickers (hidden files, follows symlinks, skips `.git`).
 - **[zoxide](https://github.com/ajeetdsouza/zoxide)** — a `cd` that learns your
@@ -110,6 +110,8 @@ lives in git config):
   alone.
 - **[bat](https://github.com/sharkdp/bat)** — a syntax-highlighting pager, used
   as the **man pager** and fzf's file preview. It does **not** shadow `cat`.
+  Themed: `install.sh` builds bat's cache with the bundled Kronuz theme
+  (`bat/themes/Kronuz.tmTheme`) and `integrations.zsh` sets `BAT_THEME=Kronuz`.
 - **[ripgrep](https://github.com/BurntSushi/ripgrep)** (`rg`) — a fast `grep`;
   nothing to wire, it just works. Point `$RIPGREP_CONFIG_PATH` at a config in
   `local.zsh` for defaults.
@@ -117,7 +119,8 @@ lives in git config):
   pager for git diffs. `install.sh` sets it in your **global gitconfig** (so you
   get `navigate`, line numbers, and `git add -p` highlighting, not just paging),
   guarded with `command -v delta` so it falls back to `less`/`cat` where delta
-  isn't installed. To set it up without re-running the installer:
+  isn't installed. It reads the same bat cache, so it uses the Kronuz syntax
+  theme too. To set it up without re-running the installer:
 
   ```bash
   git config --global core.pager \
@@ -126,7 +129,12 @@ lives in git config):
     'if command -v delta >/dev/null 2>&1; then delta --color-only; else cat; fi'
   git config --global delta.navigate true
   git config --global delta.line-numbers true
+  git config --global delta.syntax-theme Kronuz   # needs bat's cache built
   ```
+
+The colored tools share one **Kronuz** look (from
+[Kronuz-Theme](https://github.com/Kronuz/Kronuz-Theme)): eza via `eza/theme.yml`,
+bat + delta via the `bat/themes/Kronuz.tmTheme` cache, and fzf via its `--color`.
 
 ### Installing them
 
@@ -213,6 +221,7 @@ aliases.zsh        the useful aliases (ls colors, ll, mkdir -p, ...)
 terminal.zsh       window/tab title
 integrations.zsh   optional external tools (fzf, fd, zoxide, bat, eza), guarded
 eza/theme.yml      Kronuz color theme for eza (loaded via $EZA_CONFIG_DIR)
+bat/themes/         Kronuz.tmTheme for bat + delta (built into bat's cache)
 prompt.zsh         the Kronuz prompt (OS glyph, gitstatus, ...)
 plugins.zsh        plugin loader
 local.zsh.example  machine-local template (real local.zsh is git-ignored)

@@ -38,6 +38,11 @@ _kronuz_bat=''
 (( $+commands[bat] ))    && _kronuz_bat=bat
 (( $+commands[batcat] )) && [[ -z $_kronuz_bat ]] && _kronuz_bat=batcat
 if [[ -n $_kronuz_bat ]]; then
+  # Use the bundled Kronuz theme, but only once install.sh has built bat's cache
+  # (themes are read at cache-build time, not live). Guard on the cache file so
+  # we never trip bat's "unknown theme" warning on a box where it wasn't built.
+  [[ -f ${BAT_CACHE_PATH:-$HOME/.cache/bat}/themes.bin ]] && \
+    export BAT_THEME="${BAT_THEME:-Kronuz}"
   export MANPAGER="sh -c 'col -bx | $_kronuz_bat -l man -p --paging=always'"
   export MANROFFOPT='-c'
 fi
@@ -48,7 +53,7 @@ fi
 # install: brew install fzf · apt/dnf install fzf · else the prebuilt binary
 # from https://github.com/junegunn/fzf/releases into ~/.local/bin (it's Go).
 if (( $+commands[fzf] )); then
-  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border --color=fg:-1,bg:-1,hl:#cc7833,fg+:#e8e6e5,bg+:#454545,hl+:#fd971f,info:#95815e,border:#676867,prompt:#a5c261,pointer:#da4939,marker:#219186,spinner:#caa473,header:#6089b4'
   [[ -n $_kronuz_bat ]] && \
     export FZF_CTRL_T_OPTS="--preview '$_kronuz_bat -n --color=always --line-range :200 {}'"
   source <(fzf --zsh)
