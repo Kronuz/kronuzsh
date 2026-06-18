@@ -159,6 +159,7 @@ function prompt_kronuz_colors {
   DEFAULT_PROMPT_KRONUZ_COLOR_INSERT='$col[darkgrey]'
   DEFAULT_PROMPT_KRONUZ_COLOR_COMPLETING='%B$col[black]'
   DEFAULT_PROMPT_KRONUZ_COLOR_JOBS='$col[gold]'
+  DEFAULT_PROMPT_KRONUZ_COLOR_DURATION='$col[goldenrod]'
   DEFAULT_PROMPT_KRONUZ_COLOR_ACTION='$col[darkorange]'
   DEFAULT_PROMPT_KRONUZ_COLOR_ADDED='$col[darkorange]'
   DEFAULT_PROMPT_KRONUZ_COLOR_AHEAD='$col[chartreuse]'
@@ -231,6 +232,7 @@ function prompt_kronuz_glyphs {
       vim        'V'        # text label
       emacs      'E'        # text label
       jobs       '&'        # backgrounded jobs (& = the shell operator)
+      duration   ''         # no plain glyph; the formatted time stands alone
     )
   else
     # Nerd Font set (default)
@@ -254,6 +256,7 @@ function prompt_kronuz_glyphs {
       vim        $'\ue7c5'  # nf-dev-vim             inside vim
       emacs      $'\ue7cf'  # nf-dev-emacs           inside emacs
       jobs       $'\uf51e'  # nf-oct-stack           backgrounded jobs
+      duration   $'\uf017'  # nf-fa-clock_o          last command duration
     )
   fi
   local name ov val sentinel='__KRONUZ_GLYPH_UNSET__'
@@ -380,6 +383,28 @@ function _kronuz_ip_segment {
   _prompt_kronuz_ip="$(ifconfig 2>/dev/null | grep 'inet ' | grep -v '127.0.0.1' | head -1 | awk '{print $2}')"
 }
 
+# ---- command duration (preexec timer) ----
+# Show how long the last command ran, when it exceeds PROMPT_KRONUZ_CMD_DURATION_MIN
+# seconds (default 3). preexec stamps the start, precmd computes the delta.
+typeset -g _kronuz_cmd_start=0 _prompt_kronuz_duration=''
+function _kronuz_duration_preexec { _kronuz_cmd_start=${EPOCHREALTIME:-0} }
+function _kronuz_duration_fmt {
+  local -F e=$1
+  local -i t=$1
+  if   (( t >= 3600 )); then printf '%dh%02dm%02ds' $((t/3600)) $((t/60%60)) $((t%60))
+  elif (( t >= 60 ));   then printf '%dm%02ds' $((t/60)) $((t%60))
+  else printf '%.1fs' $e
+  fi
+}
+function _kronuz_duration_segment {
+  _prompt_kronuz_duration=''
+  (( _kronuz_cmd_start )) || return
+  local -F elapsed=$(( ${EPOCHREALTIME:-0} - _kronuz_cmd_start ))
+  _kronuz_cmd_start=0
+  (( elapsed >= ${PROMPT_KRONUZ_CMD_DURATION_MIN:-3} )) || return
+  _prompt_kronuz_duration="$(_kronuz_duration_fmt $elapsed)"
+}
+
 # ---- precmd ----
 typeset -g _kronuz_dumb=0 _kronuz_nocolor=0
 function prompt_kronuz_precmd {
@@ -397,6 +422,7 @@ function prompt_kronuz_precmd {
   _prompt_kronuz_pwd="${${(%):-%~}//\%/%%}"
   _kronuz_venv_segment
   _kronuz_ip_segment
+  _kronuz_duration_segment
   _kronuz_git_segment
 }
 
@@ -417,12 +443,13 @@ function prompt_kronuz_setup {
 
   autoload -Uz add-zsh-hook
   add-zsh-hook precmd prompt_kronuz_precmd
+  add-zsh-hook preexec _kronuz_duration_preexec
   zle -N zle-keymap-select
   zle -N zle-line-init
 
   local -a COLORS
   COLORS=(action added ahead behind branch clean commit completing deleted
-    dirty host indexed info insert ip jobs modified none overwrite position primary1
+    dirty duration host indexed info insert ip jobs modified none overwrite position primary1
     primary2 primary3 pwd remote renamed sep stashed status_err status_ok time
     unindexed unmerged untracked user venv vim emacs etctl)
 
@@ -456,6 +483,7 @@ function prompt_kronuz_setup {
   DEFAULT_PROMPT_KRONUZ_EMACS="\${INSIDE_EMACS:+\" $col[emacs]\${glyph[emacs]}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_ETCTL="\${ETCTL_SESSION:+\" $col[info]etctl$col[none]:$col[etctl]\${ETCTL_SESSION}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_JOBS="%(1j. $col[jobs]\${glyph[jobs]}%j$col[none].)"
+  DEFAULT_PROMPT_KRONUZ_DURATION="\${_prompt_kronuz_duration:+\" $col[duration]\${glyph[duration]}\${_prompt_kronuz_duration}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_USER="%n"
   DEFAULT_PROMPT_KRONUZ_IP="\${_prompt_kronuz_ip}"
   DEFAULT_PROMPT_KRONUZ_GIT="\${_prompt_kronuz_git:+\${(e)_prompt_kronuz_git}}"
@@ -475,6 +503,7 @@ function prompt_kronuz_setup {
   kronuz[emacs]="\${(e)PROMPT_KRONUZ_EMACS:-\$DEFAULT_PROMPT_KRONUZ_EMACS}"
   kronuz[etctl]="\${(e)PROMPT_KRONUZ_ETCTL:-\$DEFAULT_PROMPT_KRONUZ_ETCTL}"
   kronuz[jobs]="\${(e)PROMPT_KRONUZ_JOBS:-\$DEFAULT_PROMPT_KRONUZ_JOBS}"
+  kronuz[duration]="\${(e)PROMPT_KRONUZ_DURATION:-\$DEFAULT_PROMPT_KRONUZ_DURATION}"
   kronuz[user]="$col[user]\${(e)PROMPT_KRONUZ_USER:-\$DEFAULT_PROMPT_KRONUZ_USER}$col[none]"
   kronuz[git]="\${(e)PROMPT_KRONUZ_GIT:-\$DEFAULT_PROMPT_KRONUZ_GIT}"
   kronuz[venv]="\${(e)PROMPT_KRONUZ_VENV:-\$DEFAULT_PROMPT_KRONUZ_VENV}"
@@ -487,5 +516,5 @@ function prompt_kronuz_setup {
 
   SPROMPT='zsh: correct $col[red]%R%f to $col[green]%r%f [nyae]? '
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
-  PROMPT="$kronuz[err] $kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[error]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
+  PROMPT="$kronuz[err] $kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[error]$kronuz[duration]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
 }
