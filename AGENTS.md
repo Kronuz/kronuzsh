@@ -49,8 +49,11 @@ widgets, so anything that defines widgets must come before it).
 The prompt is built from deferred strings that are evaluated at every render. Two
 things make it work; keep both intact:
 
-1. **`prompt_opts=(cr percent sp subst)`** sets `PROMPT_SUBST`, so the `${(e)...}`
-   inside `$PROMPT` are parameter-expanded on each display.
+1. **`setopt PROMPT_SUBST`** (set in `runcoms/zshrc`, not the prompt module) makes
+   the `${(e)...}` inside `$PROMPT` parameter-expand on each display. zshrc also
+   sets `PROMPT_PERCENT PROMPT_CR PROMPT_SP`. (These used to ride on prezto's
+   `$prompt_opts`, which only `promptinit`'s `prompt` command reads — we call
+   `prompt_kronuz_setup` directly, so it's set explicitly in zshrc instead.)
 2. **`${(e)...}` recurses**: one `${(e)}` pass resolves a value that itself
    contains further `$`-expansions, down through the color layers.
 

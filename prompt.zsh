@@ -393,8 +393,6 @@ function prompt_kronuz_setup {
   unsetopt XTRACE KSH_ARRAYS
   zmodload -i zsh/parameter 2>/dev/null  # $parameters, used by the no-color path
 
-  prompt_opts=(cr percent sp subst)
-
   # The base palette uses hex (%F{#RRGGBB}) for the 16..255 colors so they render at
   # full 24-bit on a truecolor terminal. On anything else, load zsh/nearcolor, which
   # transparently maps those hex codes to the nearest 256-color (or to the default
@@ -414,12 +412,10 @@ function prompt_kronuz_setup {
     primary2 primary3 pwd remote renamed sep stashed status_err status_ok time
     unindexed unmerged untracked user venv vim emacs etctl)
 
-  typeset -A fcol
   local color C
   for color in "${COLORS[@]}" ; do
     C="\${(e)PROMPT_KRONUZ_COLOR_${color:u}:-\$DEFAULT_PROMPT_KRONUZ_COLOR_${color:u}}"
     col[$color]="$C"
-    fcol[$color]="\${$C//\%/%%}"
   done
 
   zstyle ':kronuz:editor:keymap:primary' format "$col[primary1]❯$col[none]$col[primary2]❯$col[none]$col[primary3]❯$col[none]"
