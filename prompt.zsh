@@ -408,6 +408,17 @@ function prompt_kronuz_precmd {
 function prompt_kronuz_setup {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
+
+  # Dumb/unknown terminals (Emacs `M-x shell`, some CI, a bare pipe) can't render
+  # colors or glyphs: zsh maps %F{N} through terminfo, and without a color
+  # capability the 8..255 codes come out as broken escapes (e.g. `\e[3231m`). Use a
+  # minimal, escape-free, glyph-free prompt and skip all the hooks/ZLE/git work.
+  if [[ -z "$TERM" || "$TERM" == (dumb|unknown) ]]; then
+    unset RPROMPT
+    PROMPT='%n@%m %~ %# '
+    return
+  fi
+
   prompt_opts=(cr percent sp subst)
 
   autoload -Uz add-zsh-hook
