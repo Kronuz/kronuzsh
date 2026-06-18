@@ -26,8 +26,10 @@ something, the file it lives in is obvious.
 
 ## Fonts (Nerd Font)
 
-The prompt uses a few [Nerd Font](https://www.nerdfonts.com/) glyphs (the OS logo
-by the hostname). Install any Nerd Font and point your terminal at it — e.g.
+The prompt uses [Nerd Font](https://www.nerdfonts.com/) glyphs: the OS logo by the
+hostname, the git segment (branch/tag/commit, stash, ahead/behind, staged/modified/
+conflicted/untracked), the venv segment, and the vi/emacs indicators. Install any
+Nerd Font and point your terminal at it — e.g.
 [MesloLGS Nerd Font](https://github.com/ryanoasis/nerd-fonts):
 
 - macOS: `brew install --cask font-meslo-lg-nerd-font`, then set it as your
@@ -36,8 +38,12 @@ by the hostname). Install any Nerd Font and point your terminal at it — e.g.
   "Use a different font for non-ASCII text"* — otherwise the glyphs show as boxes
   even with the right main font.
 
-Without a Nerd Font the prompt still works; the OS logo just shows as tofu (□) —
-set `_kronuz_os=''` in `local.zsh` to hide it.
+Without a Nerd Font, flip the whole prompt to plain-Unicode glyphs that render in
+a normal font: set `PROMPT_KRONUZ_NERD_FONT=0` (also accepts `no`/`off`/`false`) in
+`local.zsh`. You can also retune individual glyphs (in either mode) via
+`PROMPT_KRONUZ_GLYPH_<NAME>` — set one to a character of your choice, or to `''` to
+hide it (e.g. `PROMPT_KRONUZ_GLYPH_MODIFIED='*'`). See the glyph table in
+`prompt_kronuz_glyphs` for the full list of names and both default sets.
 
 For a longer, opinionated (and surely incomplete) rundown of good coding fonts,
 see [NerdFonts.md](NerdFonts.md).

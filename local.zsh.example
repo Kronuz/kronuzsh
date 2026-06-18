@@ -24,6 +24,15 @@
 # --- misc PATH ---
 # export PATH="$HOME/.local/bin:$PATH"
 
+# --- prompt glyphs ---
+# No Nerd Font? Switch the prompt to plain-Unicode glyphs (renders in any font):
+# export PROMPT_KRONUZ_NERD_FONT=0
+# Retune a single glyph (either mode); '' hides it. Names: os branch tag commit
+# remote action clean dirty stashed ahead behind staged modified conflicted
+# untracked venv vim emacs.
+# export PROMPT_KRONUZ_GLYPH_MODIFIED='*'
+# export PROMPT_KRONUZ_GLYPH_OS=''        # hide the OS logo by the hostname
+
 # --- external tool tweaks (see integrations/init.zsh; all auto-enabled when present) ---
 # ripgrep: point at a config file for your default flags (smart-case, hidden, ...)
 # export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"

@@ -216,6 +216,83 @@ function prompt_kronuz_colors {
 }
 
 
+# ---- glyphs (Nerd Font icons, with a plain-Unicode fallback set) ----
+# No Nerd Font? Switch the whole prompt to plain-Unicode glyphs that render in a
+# normal font with `PROMPT_KRONUZ_NERD_FONT=0` (also accepts no/off/false) in
+# local.zsh. Independently, override any single glyph (in either mode) via
+# `PROMPT_KRONUZ_GLYPH_<NAME>` — set it to a character of your choice, or to '' to
+# hide it, e.g.  PROMPT_KRONUZ_GLYPH_MODIFIED='*'
+#
+# Glyph names and their two defaults (Nerd Font / plain):
+#   branch  / ⎇   tag      ⚑   commit  @   remote  ⇅   action  ⚙
+#   clean   ✔   dirty    ✗   stashed ≡(/archive)   ahead ⇡   behind ⇣
+#   staged  +/✛   modified pencil/✴   conflicted ⚠/❖   untracked ?/⊖
+#   venv    /venv   vim  /V   emacs  /E
+typeset -gA glyph
+function prompt_kronuz_glyphs {
+  local -A g
+  local os_nerd=''
+  case "$OSTYPE" in
+    darwin*) os_nerd=$'\uf179' ;;  # nf-fa-apple
+    linux*)  os_nerd=$'\uf17c' ;;  # nf-fa-linux (Tux)
+  esac
+  if [[ "${(L)PROMPT_KRONUZ_NERD_FONT:-1}" == (0|no|off|false) ]]; then
+    # Plain-Unicode set (no Nerd Font required; renders via normal font fallback)
+    g=(
+      os         ''         # no good plain OS glyph; hidden by default
+      branch     $'\u2387'  # ⎇  branch (Alternative key)
+      tag        $'\u2691'  # ⚑  tag (flag)
+      commit     '@'        # @  detached HEAD
+      remote     $'\u21c5'  # ⇅  upstream / remote tracking
+      action     $'\u2699'  # ⚙  in-progress op (rebase/merge)
+      clean      $'\u2714'  # ✔  worktree clean
+      dirty      $'\u2717'  # ✗  worktree dirty
+      stashed    $'\u2261'  # ≡  stash entries
+      ahead      $'\u21e1'  # ⇡  commits ahead of upstream
+      behind     $'\u21e3'  # ⇣  commits behind upstream
+      staged     $'\u271b'  # ✛  staged changes
+      modified   $'\u2734'  # ✴  unstaged changes
+      conflicted $'\u2756'  # ❖  merge conflicts
+      untracked  $'\u2296'  # ⊖  untracked files
+      venv       'venv'     # text label
+      vim        'V'        # text label
+      emacs      'E'        # text label
+    )
+  else
+    # Nerd Font set (default)
+    g=(
+      os         "$os_nerd" # nf-fa-apple / nf-fa-linux by $OSTYPE
+      branch     $'\ue0a0'  # nf-pl-branch           local branch / git marker
+      tag        $'\uf412'  # nf-oct-tag             tag ref
+      commit     $'\uf417'  # nf-oct-git_commit      detached HEAD
+      remote     $'\uf47f'  # nf-oct-git_compare     upstream / remote tracking
+      action     $'\uf419'  # nf-oct-git_merge       in-progress op (rebase/merge)
+      clean      $'\u2714'  # \u2714 (check)         worktree clean
+      dirty      $'\u2717'  # \u2717 (cross)         worktree dirty
+      stashed    $'\uf187'  # nf-fa-archive          stash entries
+      ahead      $'\u21e1'  # \u21e1 (up arrow)      commits ahead of upstream
+      behind     $'\u21e3'  # \u21e3 (down arrow)    commits behind upstream
+      staged     $'\uf457'  # nf-oct-diff_added      staged changes
+      modified   $'\uf040'  # nf-fa-pencil           unstaged changes
+      conflicted $'\uf071'  # nf-fa-exclamation_tri  merge conflicts
+      untracked  $'\uf128'  # nf-fa-question         untracked files
+      venv       $'\ue606'  # nf-seti-python         active virtualenv
+      vim        $'\ue7c5'  # nf-dev-vim             inside vim
+      emacs      $'\ue7cf'  # nf-dev-emacs           inside emacs
+    )
+  fi
+  local name ov val sentinel='__KRONUZ_GLYPH_UNSET__'
+  for name in ${(k)g}; do
+    ov="PROMPT_KRONUZ_GLYPH_${name:u}"
+    val="${(P)ov-$sentinel}"
+    [[ "$val" == "$sentinel" ]] && val="$g[$name]"
+    glyph[$name]="$val"
+  done
+  # Back-compat: an explicit `_kronuz_os` (set in local.zsh) wins for the OS glyph.
+  (( ${+_kronuz_os} )) && glyph[os]="$_kronuz_os"
+}
+
+
 # ---- git segment (gitstatus, with a direct-git fallback) ----
 typeset -g _prompt_kronuz_git=''
 
@@ -226,24 +303,26 @@ function _kronuz_git_fallback {
   branch="$(command git symbolic-ref --short HEAD 2>/dev/null)" \
     || branch="$(command git rev-parse --short HEAD 2>/dev/null)"
   [[ -z "$branch" ]] && return
-  local sep="${(e)col[sep]}" none="${(e)col[none]}"
-  local s="${sep}:${(e)col[branch]}${branch}${none}"
+  local sep="${(e)col[sep]}" none="${(e)col[none]}" info="${(e)col[info]}"
+  local gly="$glyph[branch]"
+  command git symbolic-ref --quiet HEAD &>/dev/null || gly="$glyph[commit]"
+  local s=" ${info}${gly}${none} ${(e)col[branch]}${branch}${none}"
   local remote
   remote="$(command git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2>/dev/null)"
-  [[ -n "$remote" ]] && s+="${sep}:${(e)col[remote]}${remote}${none}"
+  [[ -n "$remote" ]] && s+=" ${info}${glyph[remote]}${none} ${(e)col[remote]}${remote}${none}"
   local staged='' unstaged='' untracked='' icons=''
   command git diff --cached --quiet --ignore-submodules 2>/dev/null || staged=1
   command git diff --quiet --ignore-submodules 2>/dev/null || unstaged=1
   [[ -n "$(command git ls-files --others --exclude-standard 2>/dev/null | head -1)" ]] && untracked=1
   if [[ -n "$staged$unstaged$untracked" ]]; then
-    icons+="${(e)col[dirty]}✗${none}"
-    [[ -n "$staged" ]]    && icons+="${(e)col[added]}✛${none}"
-    [[ -n "$unstaged" ]]  && icons+="${(e)col[modified]}✴${none}"
-    [[ -n "$untracked" ]] && icons+=" ${(e)col[untracked]}⊖${none}"
+    icons+="${(e)col[dirty]}${glyph[dirty]}${none}"
+    [[ -n "$staged" ]]    && icons+="${(e)col[added]}${glyph[staged]}${none}"
+    [[ -n "$unstaged" ]]  && icons+="${(e)col[modified]}${glyph[modified]}${none}"
+    [[ -n "$untracked" ]] && icons+=" ${(e)col[untracked]}${glyph[untracked]}${none}"
   else
-    icons="${(e)col[clean]}✔${none}"
+    icons="${(e)col[clean]}${glyph[clean]}${none}"
   fi
-  _prompt_kronuz_git=" ${(e)col[info]}git${none}${s}${sep}(${none}${icons}${sep})${none}"
+  _prompt_kronuz_git="${s}${sep} (${none}${icons}${sep})${none}"
 }
 
 function _kronuz_git_segment {
@@ -253,40 +332,41 @@ function _kronuz_git_segment {
     return
   fi
 
-  local sep="${(e)col[sep]}" none="${(e)col[none]}" s=''
+  local sep="${(e)col[sep]}" none="${(e)col[none]}" info="${(e)col[info]}" s=''
   if [[ -n "$VCS_STATUS_LOCAL_BRANCH" ]]; then
-    s+="${sep}:${(e)col[branch]}${VCS_STATUS_LOCAL_BRANCH}${none}"
+    s+=" ${info}${glyph[branch]}${none} ${(e)col[branch]}${VCS_STATUS_LOCAL_BRANCH}${none}"
   elif [[ -n "$VCS_STATUS_TAG" ]]; then
-    s+="${sep}:${(e)col[branch]}${VCS_STATUS_TAG}${none}"
+    s+=" ${info}${glyph[tag]}${none} ${(e)col[branch]}${VCS_STATUS_TAG}${none}"
   else
-    s+="${sep}:${(e)col[commit]}${VCS_STATUS_COMMIT[1,7]}${none}"
+    s+=" ${info}${glyph[commit]}${none} ${(e)col[commit]}${VCS_STATUS_COMMIT[1,7]}${none}"
   fi
   [[ -n "$VCS_STATUS_REMOTE_NAME" ]] && \
-    s+="${sep}:${(e)col[remote]}${VCS_STATUS_REMOTE_NAME}/${VCS_STATUS_REMOTE_BRANCH}${none}"
-  [[ -n "$VCS_STATUS_ACTION" ]] && s+="${sep}:${(e)col[action]}${VCS_STATUS_ACTION}${none}"
+    s+=" ${info}${glyph[remote]}${none} ${(e)col[remote]}${VCS_STATUS_REMOTE_NAME}/${VCS_STATUS_REMOTE_BRANCH}${none}"
+  [[ -n "$VCS_STATUS_ACTION" ]] && \
+    s+=" ${info}${glyph[action]}${none} ${(e)col[action]}${VCS_STATUS_ACTION}${none}"
 
   local icons=''
-  (( VCS_STATUS_STASHES )) && icons+="${(e)col[stashed]}⼐${none}"
+  (( VCS_STATUS_STASHES )) && icons+="${(e)col[stashed]}${glyph[stashed]}${none}"
   if (( VCS_STATUS_NUM_STAGED + VCS_STATUS_NUM_UNSTAGED + VCS_STATUS_NUM_UNTRACKED + VCS_STATUS_NUM_CONFLICTED )); then
-    icons+="${(e)col[dirty]}✗${none}"
+    icons+="${(e)col[dirty]}${glyph[dirty]}${none}"
   else
-    icons+="${(e)col[clean]}✔${none}"
+    icons+="${(e)col[clean]}${glyph[clean]}${none}"
   fi
-  (( VCS_STATUS_COMMITS_AHEAD ))  && icons+="${(e)col[ahead]}⇡${none}"
-  (( VCS_STATUS_COMMITS_BEHIND )) && icons+="${(e)col[behind]}⇣${none}"
-  (( VCS_STATUS_NUM_STAGED ))     && icons+="${(e)col[added]}✛${none}"
-  (( VCS_STATUS_NUM_UNSTAGED ))   && icons+="${(e)col[modified]}✴${none}"
-  (( VCS_STATUS_NUM_CONFLICTED )) && icons+="${(e)col[unmerged]}❖${none}"
-  (( VCS_STATUS_NUM_UNTRACKED ))  && icons+=" ${(e)col[untracked]}⊖${none}"
+  (( VCS_STATUS_COMMITS_AHEAD ))  && icons+="${(e)col[ahead]}${glyph[ahead]}${none}"
+  (( VCS_STATUS_COMMITS_BEHIND )) && icons+="${(e)col[behind]}${glyph[behind]}${none}"
+  (( VCS_STATUS_NUM_STAGED ))     && icons+="${(e)col[added]}${glyph[staged]}${none}"
+  (( VCS_STATUS_NUM_UNSTAGED ))   && icons+="${(e)col[modified]}${glyph[modified]}${none}"
+  (( VCS_STATUS_NUM_CONFLICTED )) && icons+="${(e)col[unmerged]}${glyph[conflicted]}${none}"
+  (( VCS_STATUS_NUM_UNTRACKED ))  && icons+=" ${(e)col[untracked]}${glyph[untracked]}${none}"
 
-  _prompt_kronuz_git=" ${(e)col[info]}git${none}${s}${sep}(${none}${icons}${sep})${none}"
+  _prompt_kronuz_git="${s}${sep} (${none}${icons}${sep})${none}"
 }
 
 # ---- venv segment (replaces prezto python-info) ----
 typeset -gA python_info
 function _kronuz_venv_segment {
   if [[ -n "$VIRTUAL_ENV" ]]; then
-    python_info[virtualenv]=" ${(e)col[info]}venv${(e)col[none]}:${(e)col[venv]}${VIRTUAL_ENV:t}${(e)col[none]}"
+    python_info[virtualenv]=" ${(e)col[info]}${glyph[venv]}${(e)col[none]} ${(e)col[venv]}${VIRTUAL_ENV:t}${(e)col[none]}"
   else
     python_info[virtualenv]=''
   fi
@@ -318,6 +398,7 @@ function prompt_kronuz_precmd {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
   prompt_kronuz_colors
+  prompt_kronuz_glyphs
   _prompt_kronuz_pwd="${${(%):-%~}//\%/%%}"
   _kronuz_venv_segment
   _kronuz_git_segment
@@ -355,19 +436,15 @@ function prompt_kronuz_setup {
   _prompt_kronuz_git=''
   _prompt_kronuz_pwd=''
 
-  # OS glyph (Nerd Font): apple on macOS, Tux on Linux. Override in local.zsh,
-  # e.g. `_kronuz_os=$'\uf31a'` (the other Tux) or `_kronuz_os=''` to hide it.
-  typeset -g _kronuz_os=''
-  case "$OSTYPE" in
-    darwin*) _kronuz_os=$'\uf179' ;;
-    linux*)  _kronuz_os=$'\uf17c' ;;
-  esac
-  DEFAULT_PROMPT_KRONUZ_OS="\${_kronuz_os:+\"$col[host]\${_kronuz_os}$col[none] \"}"
+  # OS glyph: apple on macOS, Tux on Linux (Nerd Font), hidden in plain mode
+  # (PROMPT_KRONUZ_NERD_FONT=0). Override via PROMPT_KRONUZ_GLYPH_OS, or the legacy
+  # `_kronuz_os` in local.zsh (e.g. `_kronuz_os=$'\uf31a'`, or `''` to hide it).
+  DEFAULT_PROMPT_KRONUZ_OS="\${glyph[os]:+\"$col[host]\${glyph[os]}$col[none] \"}"
 
   DEFAULT_PROMPT_KRONUZ_ERR="%(?.$col[status_ok]●$col[none].$col[status_err]●$col[none])"
   DEFAULT_PROMPT_KRONUZ_ERROR="%(?.. $col[status_err]⏎ %?$col[none])"
-  DEFAULT_PROMPT_KRONUZ_VIM="\${VIM:+\" $col[vim]V$col[none]\"}"
-  DEFAULT_PROMPT_KRONUZ_EMACS="\${INSIDE_EMACS:+\" $col[emacs]E$col[none]\"}"
+  DEFAULT_PROMPT_KRONUZ_VIM="\${VIM:+\" $col[vim]\${glyph[vim]}$col[none]\"}"
+  DEFAULT_PROMPT_KRONUZ_EMACS="\${INSIDE_EMACS:+\" $col[emacs]\${glyph[emacs]}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_ETCTL="\${ETCTL_SESSION:+\" $col[info]etctl$col[none]:$col[etctl]\${ETCTL_SESSION}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_USER="%n"
   DEFAULT_PROMPT_KRONUZ_IP="\$(ifconfig 2>/dev/null | grep \"inet \" | grep -v \"127.0.0.1\" | head -1 | awk \"{print \\\$2;}\")"

@@ -68,6 +68,25 @@ overridable by exporting `PROMPT_KRONUZ_COLOR_<NAME>` (e.g. in `local.zsh`). The
 **host** color is special: green when `$ET_VERSION` is set (inside an Eternal
 Terminal session), yellow otherwise.
 
+### Glyphs (Nerd Font, with a plain fallback)
+
+`prompt_kronuz_glyphs` builds a global `glyph[<name>]` array, recomputed every
+`precmd` (like the colors) so `local.zsh` overrides take effect. It holds two
+default tables — a Nerd Font set and a plain-Unicode set — picked by
+`PROMPT_KRONUZ_NERD_FONT` (default on; `0`/`no`/`off`/`false` selects the plain
+set, which renders in any font via normal fallback). On top of the chosen table,
+each glyph is overridable via `PROMPT_KRONUZ_GLYPH_<NAME>` (name upper-cased): set
+it to any character, or to `''` to hide it (an empty override is honored, via the
+`__KRONUZ_GLYPH_UNSET__` sentinel, not coerced back to the default).
+
+Names: `os branch tag commit remote action clean dirty stashed ahead behind staged
+modified conflicted untracked venv vim emacs`. The git/venv/keymap segments and the
+OS segment all read `$glyph[...]` rather than hard-coding icons. The OS glyph is
+OS-dependent (apple/Tux by `$OSTYPE`, empty in plain mode); the legacy `_kronuz_os`
+still works as a highest-priority override (applied after the loop). Each default
+codepoint is in the inline `g=( ... )` tables, with the `nf-*` name or the literal
+char in a comment.
+
 ### Segments
 
 Each segment is a deferred string `kronuz[x]="${(e)PROMPT_KRONUZ_X:-$DEFAULT_PROMPT_KRONUZ_X}"`,
