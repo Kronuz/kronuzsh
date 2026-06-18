@@ -158,6 +158,7 @@ function prompt_kronuz_colors {
   DEFAULT_PROMPT_KRONUZ_COLOR_OVERWRITE='$col[red]'
   DEFAULT_PROMPT_KRONUZ_COLOR_INSERT='$col[darkgrey]'
   DEFAULT_PROMPT_KRONUZ_COLOR_COMPLETING='%B$col[black]'
+  DEFAULT_PROMPT_KRONUZ_COLOR_JOBS='$col[gold]'
   DEFAULT_PROMPT_KRONUZ_COLOR_ACTION='$col[darkorange]'
   DEFAULT_PROMPT_KRONUZ_COLOR_ADDED='$col[darkorange]'
   DEFAULT_PROMPT_KRONUZ_COLOR_AHEAD='$col[chartreuse]'
@@ -229,6 +230,7 @@ function prompt_kronuz_glyphs {
       venv       'venv'     # text label
       vim        'V'        # text label
       emacs      'E'        # text label
+      jobs       '&'        # backgrounded jobs (& = the shell operator)
     )
   else
     # Nerd Font set (default)
@@ -251,6 +253,7 @@ function prompt_kronuz_glyphs {
       venv       $'\ue606'  # nf-seti-python         active virtualenv
       vim        $'\ue7c5'  # nf-dev-vim             inside vim
       emacs      $'\ue7cf'  # nf-dev-emacs           inside emacs
+      jobs       $'\uf51e'  # nf-oct-stack           backgrounded jobs
     )
   fi
   local name ov val sentinel='__KRONUZ_GLYPH_UNSET__'
@@ -419,7 +422,7 @@ function prompt_kronuz_setup {
 
   local -a COLORS
   COLORS=(action added ahead behind branch clean commit completing deleted
-    dirty host indexed info insert ip modified none overwrite position primary1
+    dirty host indexed info insert ip jobs modified none overwrite position primary1
     primary2 primary3 pwd remote renamed sep stashed status_err status_ok time
     unindexed unmerged untracked user venv vim emacs etctl)
 
@@ -452,6 +455,7 @@ function prompt_kronuz_setup {
   DEFAULT_PROMPT_KRONUZ_VIM="\${VIM:+\" $col[vim]\${glyph[vim]}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_EMACS="\${INSIDE_EMACS:+\" $col[emacs]\${glyph[emacs]}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_ETCTL="\${ETCTL_SESSION:+\" $col[info]etctl$col[none]:$col[etctl]\${ETCTL_SESSION}$col[none]\"}"
+  DEFAULT_PROMPT_KRONUZ_JOBS="%(1j. $col[jobs]\${glyph[jobs]}%j$col[none].)"
   DEFAULT_PROMPT_KRONUZ_USER="%n"
   DEFAULT_PROMPT_KRONUZ_IP="\${_prompt_kronuz_ip}"
   DEFAULT_PROMPT_KRONUZ_GIT="\${_prompt_kronuz_git:+\${(e)_prompt_kronuz_git}}"
@@ -470,6 +474,7 @@ function prompt_kronuz_setup {
   kronuz[vim]="\${(e)PROMPT_KRONUZ_VIM:-\$DEFAULT_PROMPT_KRONUZ_VIM}"
   kronuz[emacs]="\${(e)PROMPT_KRONUZ_EMACS:-\$DEFAULT_PROMPT_KRONUZ_EMACS}"
   kronuz[etctl]="\${(e)PROMPT_KRONUZ_ETCTL:-\$DEFAULT_PROMPT_KRONUZ_ETCTL}"
+  kronuz[jobs]="\${(e)PROMPT_KRONUZ_JOBS:-\$DEFAULT_PROMPT_KRONUZ_JOBS}"
   kronuz[user]="$col[user]\${(e)PROMPT_KRONUZ_USER:-\$DEFAULT_PROMPT_KRONUZ_USER}$col[none]"
   kronuz[git]="\${(e)PROMPT_KRONUZ_GIT:-\$DEFAULT_PROMPT_KRONUZ_GIT}"
   kronuz[venv]="\${(e)PROMPT_KRONUZ_VENV:-\$DEFAULT_PROMPT_KRONUZ_VENV}"
@@ -482,5 +487,5 @@ function prompt_kronuz_setup {
 
   SPROMPT='zsh: correct $col[red]%R%f to $col[green]%r%f [nyae]? '
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
-  PROMPT="$kronuz[err] $kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[error]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
+  PROMPT="$kronuz[err] $kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[error]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
 }
