@@ -432,7 +432,9 @@ function _kronuz_duration_segment {
 # Lets modern terminals (iTerm2/VSCode/WezTerm/kitty) open new tabs/splits in
 # $PWD and jump between prompts / show per-command status. Skipped on dumb/unknown.
 # The B mark (input start) rides at the end of PROMPT via $_kronuz_osc_b.
-typeset -g _kronuz_osc_b=''
+# In iTerm2 ($_kronuz_is_iterm), we also emit its proprietary OSC 1337 host/cwd
+# (the OSC 133 marks above are the cross-terminal part).
+typeset -g _kronuz_osc_b='' _kronuz_is_iterm=0
 function _kronuz_osc_active { [[ -n "$TERM" && "$TERM" != (dumb|unknown) ]] }
 function _kronuz_osc_preexec {
   _kronuz_osc_active && print -n '\e]133;C\a'
@@ -442,6 +444,7 @@ function _kronuz_osc_precmd {
   if ! _kronuz_osc_active; then _kronuz_osc_b=''; return; fi
   print -n "\e]133;D;${ret}\a\e]133;A\a"
   print -Pn '\e]7;file://%M%d\a'
+  (( _kronuz_is_iterm )) && print -Pn "\e]1337;RemoteHost=${USER}@%M\a\e]1337;CurrentDir=%d\a"
   _kronuz_osc_b=$'%{\e]133;B\a%}'
 }
 
@@ -507,6 +510,12 @@ function prompt_kronuz_setup {
   add-zsh-hook preexec _kronuz_osc_preexec
   # run the OSC precmd first so it captures the command's real exit status
   precmd_functions=(_kronuz_osc_precmd ${precmd_functions:#_kronuz_osc_precmd})
+  # iTerm2: announce shell integration once (unlocks its command history / status /
+  # alerts). $LC_TERMINAL survives ssh; $TERM_PROGRAM is the local case.
+  if [[ "$LC_TERMINAL" == iTerm2 || "$TERM_PROGRAM" == iTerm.app ]] && _kronuz_osc_active; then
+    _kronuz_is_iterm=1
+    print -n '\e]1337;ShellIntegrationVersion=14;shell=zsh\a'
+  fi
   zle -N zle-keymap-select
   zle -N zle-line-init
 

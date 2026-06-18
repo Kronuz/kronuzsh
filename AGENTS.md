@@ -128,9 +128,11 @@ Current layout:
 Beyond the deferred segments, a few features hook the line lifecycle:
 **command duration** (`preexec` stamps `$EPOCHREALTIME`, precmd formats the delta
 into `_prompt_kronuz_duration` when it tops `PROMPT_KRONUZ_CMD_DURATION_MIN`),
-**terminal integration** (OSC 7 cwd + OSC 133 marks from `_kronuz_osc_precmd` /
-`_kronuz_osc_preexec`, with the OSC precmd ordered first in `precmd_functions` so
-the `D` mark carries the real `$?`), and the **transient prompt** (an accept-line
+**terminal integration** (cross-terminal OSC 7 cwd + OSC 133 marks from
+`_kronuz_osc_precmd` / `_kronuz_osc_preexec`, with the OSC precmd ordered first in
+`precmd_functions` so the `D` mark carries the real `$?`; in iTerm2,
+`$_kronuz_is_iterm`, it also emits the proprietary OSC 1337 ShellIntegrationVersion
+/ RemoteHost / CurrentDir), and the **transient prompt** (an accept-line
 widget on `^M`/`^J` that swaps to `$_kronuz_transient_prompt` and `reset-prompt`s,
 restored in precmd). The **jobs** segment is prompt-native (`%(1j...)`); the
 **context** (SSH/container) badge is detected once at setup. All of these are gated
