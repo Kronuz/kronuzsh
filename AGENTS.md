@@ -56,16 +56,26 @@ things make it work; keep both intact:
 
 ### Colors (two layers)
 
-- **Base palette**: `col[red]='%F{1}'`, `col[darkorange]='%F{208}'`, ... (name to a
-  zsh `%F{N}` escape). Defined inline near the top of `prompt.zsh`.
+- **Base palette**: `col[red]='%F{1}'`, `col[darkorange]='%F{#d75f00}'`, ... (name to
+  a zsh color escape). Defined inline near the top of `prompt.zsh`. The ANSI 0..15
+  colors stay `%F{N}` so they track the terminal's theme; the 16..255 colors are
+  **hex** `%F{#RRGGBB}` so they render at full 24-bit on a truecolor terminal.
 - **Semantic layer**: `prompt_kronuz_colors` sets
-  `DEFAULT_PROMPT_KRONUZ_COLOR_<NAME>='$col[...]'` (e.g. `..._BRANCH='%B$col[white]'`),
-  in both the 256-color and 8-color branches. A loop in `prompt_kronuz_setup` then
+  `DEFAULT_PROMPT_KRONUZ_COLOR_<NAME>='$col[...]'` (e.g. `..._BRANCH='%B$col[white]'`)
+  in a single branch (no 256-vs-8 split). A loop in `prompt_kronuz_setup` then
   builds `col[<name>]="${(e)PROMPT_KRONUZ_COLOR_<NAME>:-$DEFAULT_PROMPT_KRONUZ_COLOR_<NAME>}"`.
 
-So `${(e)col[branch]}` yields the final `%F{N}`, and any semantic color is
-overridable by exporting `PROMPT_KRONUZ_COLOR_<NAME>` (e.g. in `local.zsh`). The
-**host** color is special: green when `$ET_VERSION` is set (inside an Eternal
+So `${(e)col[branch]}` yields the final color escape, and any semantic color is
+overridable by exporting `PROMPT_KRONUZ_COLOR_<NAME>` (e.g. in `local.zsh`).
+
+**Truecolor / degradation.** `prompt_kronuz_setup` checks `$COLORTERM`
+(`24bit`/`truecolor`) and `$terminfo[colors]`; on a non-truecolor terminal it
+`zmodload zsh/nearcolor`, which transparently maps the hex codes to the nearest
+256-color (and to the default foreground on 8/16-color terminals, so no broken
+escapes). One hex palette therefore covers every tier — truecolor → 256 → 16/8 →
+the `dumb` bail (which returns a plain, color-free prompt before any of this).
+
+The **host** color is special: green when `$ET_VERSION` is set (inside an Eternal
 Terminal session), yellow otherwise.
 
 ### Glyphs (Nerd Font, with a plain fallback)
