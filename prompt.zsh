@@ -411,6 +411,23 @@ function _kronuz_duration_segment {
   _prompt_kronuz_duration="$(_kronuz_duration_fmt $elapsed)"
 }
 
+# ---- terminal shell integration (OSC 7 cwd + OSC 133 prompt marks) ----
+# Lets modern terminals (iTerm2/VSCode/WezTerm/kitty) open new tabs/splits in
+# $PWD and jump between prompts / show per-command status. Skipped on dumb/unknown.
+# The B mark (input start) rides at the end of PROMPT via $_kronuz_osc_b.
+typeset -g _kronuz_osc_b=''
+function _kronuz_osc_active { [[ -n "$TERM" && "$TERM" != (dumb|unknown) ]] }
+function _kronuz_osc_preexec {
+  _kronuz_osc_active && print -n '\e]133;C\a'
+}
+function _kronuz_osc_precmd {
+  local ret=$?
+  if ! _kronuz_osc_active; then _kronuz_osc_b=''; return; fi
+  print -n "\e]133;D;${ret}\a\e]133;A\a"
+  print -Pn '\e]7;file://%M%d\a'
+  _kronuz_osc_b=$'%{\e]133;B\a%}'
+}
+
 # ---- precmd ----
 typeset -g _kronuz_dumb=0 _kronuz_nocolor=0
 function prompt_kronuz_precmd {
@@ -450,6 +467,10 @@ function prompt_kronuz_setup {
   autoload -Uz add-zsh-hook
   add-zsh-hook precmd prompt_kronuz_precmd
   add-zsh-hook preexec _kronuz_duration_preexec
+  add-zsh-hook precmd _kronuz_osc_precmd
+  add-zsh-hook preexec _kronuz_osc_preexec
+  # run the OSC precmd first so it captures the command's real exit status
+  precmd_functions=(_kronuz_osc_precmd ${precmd_functions:#_kronuz_osc_precmd})
   zle -N zle-keymap-select
   zle -N zle-line-init
 
@@ -529,5 +550,5 @@ function prompt_kronuz_setup {
 
   SPROMPT='zsh: correct $col[red]%R%f to $col[green]%r%f [nyae]? '
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
-  PROMPT="$kronuz[err] $kronuz[info]$kronuz[context]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[error]$kronuz[duration]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
+  PROMPT="$kronuz[err] $kronuz[info]$kronuz[context]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[error]$kronuz[duration]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] \${_kronuz_osc_b}"
 }
