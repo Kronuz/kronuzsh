@@ -160,6 +160,8 @@ function prompt_kronuz_colors {
   DEFAULT_PROMPT_KRONUZ_COLOR_COMPLETING='%B$col[black]'
   DEFAULT_PROMPT_KRONUZ_COLOR_JOBS='$col[gold]'
   DEFAULT_PROMPT_KRONUZ_COLOR_DURATION='$col[goldenrod]'
+  DEFAULT_PROMPT_KRONUZ_COLOR_SSH='$col[mediumpurple]'
+  DEFAULT_PROMPT_KRONUZ_COLOR_CONTAINER='$col[deepskyblue]'
   DEFAULT_PROMPT_KRONUZ_COLOR_ACTION='$col[darkorange]'
   DEFAULT_PROMPT_KRONUZ_COLOR_ADDED='$col[darkorange]'
   DEFAULT_PROMPT_KRONUZ_COLOR_AHEAD='$col[chartreuse]'
@@ -233,6 +235,8 @@ function prompt_kronuz_glyphs {
       emacs      'E'        # text label
       jobs       '&'        # backgrounded jobs (& = the shell operator)
       duration   ''         # no plain glyph; the formatted time stands alone
+      ssh        'ssh'      # text label
+      container  'box'      # text label
     )
   else
     # Nerd Font set (default)
@@ -257,6 +261,8 @@ function prompt_kronuz_glyphs {
       emacs      $'\ue7cf'  # nf-dev-emacs           inside emacs
       jobs       $'\uf51e'  # nf-oct-stack           backgrounded jobs
       duration   $'\uf017'  # nf-fa-clock_o          last command duration
+      ssh        $'\ueb3a'  # nf-cod-remote          inside an SSH session
+      container  $'\uf4b7'  # nf-oct-container       inside a container
     )
   fi
   local name ov val sentinel='__KRONUZ_GLYPH_UNSET__'
@@ -451,7 +457,7 @@ function prompt_kronuz_setup {
   COLORS=(action added ahead behind branch clean commit completing deleted
     dirty duration host indexed info insert ip jobs modified none overwrite position primary1
     primary2 primary3 pwd remote renamed sep stashed status_err status_ok time
-    unindexed unmerged untracked user venv vim emacs etctl)
+    unindexed unmerged untracked user venv vim emacs etctl ssh container)
 
   local color C
   for color in "${COLORS[@]}" ; do
@@ -472,10 +478,16 @@ function prompt_kronuz_setup {
   _prompt_kronuz_git=''
   _prompt_kronuz_pwd=''
 
+  # Session context, fixed for the shell's life: SSH session and/or container.
+  typeset -g _kronuz_is_ssh='' _kronuz_is_container=''
+  [[ -n "$SSH_CONNECTION" || -n "$SSH_TTY" || -n "$SSH_CLIENT" ]] && _kronuz_is_ssh=1
+  [[ -f /.dockerenv || -f /run/.containerenv || -n "$container" ]] && _kronuz_is_container=1
+
   # OS glyph: apple on macOS, Tux on Linux (Nerd Font), hidden in plain mode
   # (PROMPT_KRONUZ_NERD_FONT=0). Override via PROMPT_KRONUZ_GLYPH_OS, or the legacy
   # `_kronuz_os` in local.zsh (e.g. `_kronuz_os=$'\uf31a'`, or `''` to hide it).
   DEFAULT_PROMPT_KRONUZ_OS="\${glyph[os]:+\"$col[host]\${glyph[os]}$col[none] \"}"
+  DEFAULT_PROMPT_KRONUZ_CONTEXT="\${_kronuz_is_container:+\" $col[container]\${glyph[container]}$col[none]\"}\${_kronuz_is_ssh:+\" $col[ssh]\${glyph[ssh]}$col[none]\"}"
 
   DEFAULT_PROMPT_KRONUZ_ERR="%(?.$col[status_ok]●$col[none].$col[status_err]●$col[none])"
   DEFAULT_PROMPT_KRONUZ_ERROR="%(?.. $col[status_err]⏎ %?$col[none])"
@@ -502,6 +514,7 @@ function prompt_kronuz_setup {
   kronuz[vim]="\${(e)PROMPT_KRONUZ_VIM:-\$DEFAULT_PROMPT_KRONUZ_VIM}"
   kronuz[emacs]="\${(e)PROMPT_KRONUZ_EMACS:-\$DEFAULT_PROMPT_KRONUZ_EMACS}"
   kronuz[etctl]="\${(e)PROMPT_KRONUZ_ETCTL:-\$DEFAULT_PROMPT_KRONUZ_ETCTL}"
+  kronuz[context]="\${(e)PROMPT_KRONUZ_CONTEXT:-\$DEFAULT_PROMPT_KRONUZ_CONTEXT}"
   kronuz[jobs]="\${(e)PROMPT_KRONUZ_JOBS:-\$DEFAULT_PROMPT_KRONUZ_JOBS}"
   kronuz[duration]="\${(e)PROMPT_KRONUZ_DURATION:-\$DEFAULT_PROMPT_KRONUZ_DURATION}"
   kronuz[user]="$col[user]\${(e)PROMPT_KRONUZ_USER:-\$DEFAULT_PROMPT_KRONUZ_USER}$col[none]"
@@ -516,5 +529,5 @@ function prompt_kronuz_setup {
 
   SPROMPT='zsh: correct $col[red]%R%f to $col[green]%r%f [nyae]? '
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
-  PROMPT="$kronuz[err] $kronuz[info]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[error]$kronuz[duration]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
+  PROMPT="$kronuz[err] $kronuz[info]$kronuz[context]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[error]$kronuz[duration]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] "
 }
