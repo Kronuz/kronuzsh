@@ -102,11 +102,15 @@ it to any character, or to `''` to hide it (an empty override is honored, via th
 `__KRONUZ_GLYPH_UNSET__` sentinel, not coerced back to the default).
 
 Names: `os branch tag commit remote action clean dirty stashed ahead behind staged
-modified conflicted untracked venv vim emacs`. The git/venv/keymap segments and the
-OS segment all read `$glyph[...]` rather than hard-coding icons. The OS glyph is
-OS-dependent (apple/Tux by `$OSTYPE`, empty in plain mode); the legacy `_kronuz_os`
-still works as a highest-priority override (applied after the loop). Each default
-codepoint is in the inline `g=( ... )` tables, with the `nf-*` name or the literal
+modified conflicted untracked venv vim emacs jobs duration ssh container dot return
+overwrite caret caret_alt`. The git/venv/keymap/error segments and the OS segment
+all read `$glyph[...]` rather than hard-coding icons. A separate `glyph_pad[<name>]`
+holds a trailing space for glyphs wide enough to collide with following text (a
+single Private-Use-Area Nerd Font char); plain BMP / character glyphs get none, so
+counts/jobs/duration only space out the wide glyphs. The OS glyph is OS-dependent
+(apple/Tux by `$OSTYPE`, empty in plain mode); the legacy `_kronuz_os` still works
+as a highest-priority override (applied after the loop). Each default codepoint is
+in the inline `g=( ... )` tables, with the `nf-*` name or the literal
 char in a comment.
 
 ### Segments

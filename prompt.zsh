@@ -265,6 +265,13 @@ function prompt_kronuz_glyphs {
       container  $'\uf4b7'  # nf-oct-container       inside a container
     )
   fi
+  # Mode-independent glyphs: plain BMP marks that render in any font, so they're the
+  # same in both sets (kept here, not hard-coded inline, so they're overridable too).
+  g[dot]=$'\u25cf'        # ● command/error status dot
+  g[return]=$'\u23ce'     # ⏎ nonzero-exit marker
+  g[overwrite]=$'\u267a'  # ♺ overwrite (replace) mode
+  g[caret]=$'\u276f'      # ❯ prompt caret (insert keymap)
+  g[caret_alt]=$'\u276e'  # ❮ prompt caret (vicmd keymap)
   local name ov val sentinel='__KRONUZ_GLYPH_UNSET__'
   local -i c
   for name in ${(k)g}; do
@@ -515,9 +522,9 @@ function prompt_kronuz_setup {
     col[$color]="$C"
   done
 
-  zstyle ':kronuz:editor:keymap:primary' format "$col[primary1]❯$col[none]$col[primary2]❯$col[none]$col[primary3]❯$col[none]"
-  zstyle ':kronuz:editor:keymap:alternate' format "$col[primary3]❮$col[none]$col[primary2]❮$col[none]$col[primary1]❮$col[none]"
-  zstyle ':kronuz:editor:keymap:overwrite' format " $col[overwrite]♺$col[none]"
+  zstyle ':kronuz:editor:keymap:primary' format "$col[primary1]\${glyph[caret]}$col[none]$col[primary2]\${glyph[caret]}$col[none]$col[primary3]\${glyph[caret]}$col[none]"
+  zstyle ':kronuz:editor:keymap:alternate' format "$col[primary3]\${glyph[caret_alt]}$col[none]$col[primary2]\${glyph[caret_alt]}$col[none]$col[primary1]\${glyph[caret_alt]}$col[none]"
+  zstyle ':kronuz:editor:keymap:overwrite' format " $col[overwrite]\${glyph[overwrite]}$col[none]"
 
   # Seed the keymap arrow so there's always a prompt char, even where ZLE is off
   # (e.g. Emacs `M-x shell`) and zle-line-init never fires to set it.
@@ -539,8 +546,8 @@ function prompt_kronuz_setup {
   DEFAULT_PROMPT_KRONUZ_OS="\${glyph[os]:+\"$col[host]\${glyph[os]}$col[none] \"}"
   DEFAULT_PROMPT_KRONUZ_CONTEXT="\${_kronuz_is_container:+\" $col[container]\${glyph[container]}$col[none]\"}\${_kronuz_is_ssh:+\" $col[ssh]\${glyph[ssh]}$col[none]\"}"
 
-  DEFAULT_PROMPT_KRONUZ_ERR="%(?.$col[status_ok]●$col[none].$col[status_err]●$col[none])"
-  DEFAULT_PROMPT_KRONUZ_ERROR="%(?.. $col[status_err]⏎ %?$col[none])"
+  DEFAULT_PROMPT_KRONUZ_ERR="%(?.$col[status_ok]\${glyph[dot]}$col[none].$col[status_err]\${glyph[dot]}$col[none])"
+  DEFAULT_PROMPT_KRONUZ_ERROR="%(?.. $col[status_err]\${glyph[return]} %?$col[none])"
   DEFAULT_PROMPT_KRONUZ_VIM="\${VIM:+\" $col[vim]\${glyph[vim]}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_EMACS="\${INSIDE_EMACS:+\" $col[emacs]\${glyph[emacs]}$col[none]\"}"
   DEFAULT_PROMPT_KRONUZ_ETCTL="\${ETCTL_SESSION:+\" $col[info]etctl$col[none]:$col[etctl]\${ETCTL_SESSION}$col[none]\"}"
@@ -583,7 +590,7 @@ function prompt_kronuz_setup {
 
   # Transient prompt: the caret left in scrollback for already-run commands.
   # Override the look with PROMPT_KRONUZ_TRANSIENT, or set it to '' to disable.
-  _kronuz_transient_prompt="${PROMPT_KRONUZ_TRANSIENT-$col[primary3]❯$col[none] }"
+  _kronuz_transient_prompt="${PROMPT_KRONUZ_TRANSIENT-$col[primary3]\${glyph[caret]}$col[none] }"
   zle -N _kronuz_transient_accept
   bindkey '^M' _kronuz_transient_accept
   bindkey '^J' _kronuz_transient_accept
