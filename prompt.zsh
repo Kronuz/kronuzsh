@@ -162,6 +162,7 @@ function prompt_kronuz_colors {
   DEFAULT_PROMPT_KRONUZ_COLOR_DURATION='$col[goldenrod]'
   DEFAULT_PROMPT_KRONUZ_COLOR_SSH='$col[mediumpurple]'
   DEFAULT_PROMPT_KRONUZ_COLOR_CONTAINER='$col[deepskyblue]'
+  DEFAULT_PROMPT_KRONUZ_COLOR_TRANSIENT='$col[darkgrey]'
   DEFAULT_PROMPT_KRONUZ_COLOR_ACTION='$col[darkorange]'
   DEFAULT_PROMPT_KRONUZ_COLOR_ADDED='$col[darkorange]'
   DEFAULT_PROMPT_KRONUZ_COLOR_AHEAD='$col[chartreuse]'
@@ -523,7 +524,7 @@ function prompt_kronuz_setup {
   COLORS=(action added ahead behind branch clean commit completing deleted
     dirty duration host indexed info insert ip jobs modified none overwrite position primary1
     primary2 primary3 pwd remote renamed sep stashed status_err status_ok time
-    unindexed unmerged untracked user venv vim emacs etctl ssh container)
+    unindexed unmerged untracked user venv vim emacs etctl ssh container transient)
 
   local color C
   for color in "${COLORS[@]}" ; do
@@ -604,7 +605,7 @@ function prompt_kronuz_setup {
   if (( ${+PROMPT_KRONUZ_TRANSIENT} )); then
     _kronuz_transient_prompt="$PROMPT_KRONUZ_TRANSIENT"
   else
-    _kronuz_transient_prompt="$col[primary3]\${glyph[caret]}$col[none] "
+    _kronuz_transient_prompt="$col[transient]\${glyph[caret]}$col[none] "
   fi
   zle -N _kronuz_transient_accept
   bindkey '^M' _kronuz_transient_accept
