@@ -518,7 +518,7 @@ function _kronuz_transient_style {
     *)  # dim: same hues, darker — scale each fg toward black (truecolor output).
       # zsh region_highlight has no faint/dim attribute, so we recolour.
       setopt localoptions extendedglob
-      local -F factor=${PROMPT_KRONUZ_TRANSIENT_DIM:-0.99}
+      local -F factor=${PROMPT_KRONUZ_TRANSIENT_DIM:-0.7}
       local -a out p reply; local e hex; local -i r g b
       for e in "${region_highlight[@]}"; do
         p=("${(z)e}")
