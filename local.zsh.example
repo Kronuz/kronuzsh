@@ -39,7 +39,11 @@
 # export PROMPT_KRONUZ_CMD_DURATION_MIN=5
 # Transient prompt: past prompts collapse to this caret. Set to '' to disable.
 # export PROMPT_KRONUZ_TRANSIENT=''
-# The just-run command is also dimmed to grey; restyle that (region_highlight spec):
+# How the just-run command is restyled in the collapsed line: dim (default; same
+# syntax colors, darker), mute (grey), or keep (leave the colors).
+# export PROMPT_KRONUZ_TRANSIENT_STYLE=mute
+# dim darkness (0=black .. 1=unchanged); mute color (a region_highlight spec):
+# export PROMPT_KRONUZ_TRANSIENT_DIM=0.4
 # export PROMPT_KRONUZ_TRANSIENT_HL='fg=242'
 
 # --- external tool tweaks (see integrations/init.zsh; all auto-enabled when present) ---

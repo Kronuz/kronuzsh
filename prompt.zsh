@@ -452,16 +452,65 @@ function _kronuz_osc_precmd {
 # ---- transient prompt: collapse a submitted prompt to a minimal caret ----
 # On accept-line, swap PROMPT to a one-line caret and redraw, so scrollback keeps
 # only a minimal prompt for past commands; restored before the next prompt. The
-# just-entered command is muted too (its syntax highlighting replaced with one grey
-# span, $col[transient]), so the whole past line reads as history. Off on dumb
-# (reset-prompt can't redraw in place there) and when PROMPT_KRONUZ_TRANSIENT=''.
+# just-entered command is restyled per PROMPT_KRONUZ_TRANSIENT_STYLE (dim = keep the
+# syntax hues but faint; mute = one grey span, PROMPT_KRONUZ_TRANSIENT_HL; keep =
+# leave it), so the whole past line reads as history. Off on dumb (reset-prompt
+# can't redraw in place there) and when PROMPT_KRONUZ_TRANSIENT=''.
 typeset -g _kronuz_prompt_full='' _kronuz_rprompt_full='' _kronuz_muting=0
+function _kronuz_color_rgb {
+  # $1: #rrggbb | 0-255 index | basic colour name -> reply=(r g b), or reply=()
+  emulate -L zsh -o extendedglob
+  local v=$1; reply=()
+  if [[ $v = (#i)'#'[0-9a-f](#c6) ]]; then
+    reply=( $(( 16#${v[2,3]} )) $(( 16#${v[4,5]} )) $(( 16#${v[6,7]} )) ); return
+  fi
+  local -A nm=(black 0 red 1 green 2 yellow 3 blue 4 magenta 5 cyan 6 white 7)
+  [[ -n ${nm[$v]-} ]] && v=${nm[$v]}
+  [[ $v = <0-255> ]] || return
+  local -i n=$v
+  if (( n < 16 )); then
+    local -a sys=(000000 800000 008000 808000 000080 800080 008080 c0c0c0
+                  808080 ff0000 00ff00 ffff00 0000ff ff00ff 00ffff ffffff)
+    local h=${sys[n+1]}
+    reply=( $(( 16#${h[1,2]} )) $(( 16#${h[3,4]} )) $(( 16#${h[5,6]} )) )
+  elif (( n < 232 )); then
+    local -i i=n-16; local -a lv=(0 95 135 175 215 255)
+    reply=( ${lv[i/36+1]} ${lv[i/6%6+1]} ${lv[i%6+1]} )
+  else
+    local -i l=8+10*(n-232); reply=( $l $l $l )
+  fi
+}
+function _kronuz_transient_style {
+  case "${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}" in
+    keep|none|off) ;;
+    mute|grey|gray)
+      region_highlight=("0 ${#BUFFER} ${PROMPT_KRONUZ_TRANSIENT_HL:-fg=8}") ;;
+    *)  # dim: same hues, darker — scale each fg toward black (truecolor output).
+      # zsh region_highlight has no faint/dim attribute, so we recolour.
+      setopt localoptions extendedglob
+      local -F factor=${PROMPT_KRONUZ_TRANSIENT_DIM:-0.5}
+      local -a out p reply; local e hex; local -i r g b
+      for e in "${region_highlight[@]}"; do
+        p=("${(z)e}")
+        if [[ ${p[3]} = (#b)(*)fg=([^, ]##)(*) ]]; then
+          _kronuz_color_rgb "${match[2]}"
+          if (( $#reply == 3 )); then
+            r=$(( reply[1]*factor )); g=$(( reply[2]*factor )); b=$(( reply[3]*factor ))
+            printf -v hex '%02x%02x%02x' r g b
+            p[3]="${match[1]}fg=#${hex}${match[3]}"
+          fi
+        fi
+        out+=("${p[1]} ${p[2]} ${p[3]}")
+      done
+      region_highlight=("${out[@]}") ;;
+  esac
+}
 function _kronuz_transient_accept {
   if (( ! ${_kronuz_dumb:-0} )) && [[ -n "$_kronuz_transient_prompt" ]]; then
     _kronuz_prompt_full=$PROMPT _kronuz_rprompt_full=$RPROMPT
     PROMPT=$_kronuz_transient_prompt RPROMPT=''
     _kronuz_muting=1
-    region_highlight=("0 ${#BUFFER} ${PROMPT_KRONUZ_TRANSIENT_HL:-fg=8}")
+    _kronuz_transient_style
     zle .reset-prompt
     zle .accept-line
     return
@@ -469,11 +518,11 @@ function _kronuz_transient_accept {
   zle accept-line
 }
 # Runs as a zle-line-finish hook (registered after fast-syntax-highlighting's, so it
-# wins the final paint): re-mute the buffer that fsh just re-coloured on line finish.
+# wins the final paint): re-apply our styling to the buffer fsh just re-coloured.
 function _kronuz_transient_linefinish {
   (( ${_kronuz_muting:-0} )) || return
   _kronuz_muting=0
-  region_highlight=("0 ${#BUFFER} ${PROMPT_KRONUZ_TRANSIENT_HL:-fg=8}")
+  _kronuz_transient_style
 }
 function _kronuz_transient_restore {
   [[ -n "$_kronuz_prompt_full" ]] || return
