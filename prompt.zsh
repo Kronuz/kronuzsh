@@ -357,6 +357,20 @@ function _kronuz_ip_segment {
   _prompt_kronuz_ip="$(ifconfig 2>/dev/null | grep 'inet ' | grep -v '127.0.0.1' | head -1 | awk '{print $2}')"
 }
 
+# ---- status line (last command's exit code + duration, on its own line) ----
+# Shows ⏎<code> when the last command failed and the duration when it was slow, on a
+# line above the info line. Empty (and no line) when the command was quick and clean.
+typeset -g _prompt_kronuz_status='' _kronuz_last_exit=0
+function _kronuz_status_segment {
+  _prompt_kronuz_status=''
+  local out=''
+  (( ${_kronuz_last_exit:-0} != 0 )) && \
+    out+="${(e)col[status_err]}${glyph[return]} ${_kronuz_last_exit}${(e)col[none]}"
+  [[ -n "$_prompt_kronuz_duration" ]] && \
+    out+="${out:+ }${(e)col[duration]}${glyph[duration]}${glyph_pad[duration]}${_prompt_kronuz_duration}${(e)col[none]}"
+  [[ -n "$out" ]] && _prompt_kronuz_status="${out}%E"$'\n'
+}
+
 # ---- command duration (preexec timer) ----
 # Show how long the last command ran, when it exceeds PROMPT_KRONUZ_CMD_DURATION_MIN
 # seconds (default 3). preexec stamps the start, precmd computes the delta.
@@ -392,6 +406,7 @@ function _kronuz_osc_preexec {
 }
 function _kronuz_osc_precmd {
   local ret=$?
+  typeset -g _kronuz_last_exit=$ret    # captured first (this hook runs first) for the status line
   if ! _kronuz_osc_active; then _kronuz_osc_b=''; return; fi
   print -n "\e]133;D;${ret}\a\e]133;A\a"
   print -Pn '\e]7;file://%M%d\a'
@@ -524,6 +539,7 @@ function prompt_kronuz_precmd {
   _kronuz_venv_segment
   _kronuz_ip_segment
   _kronuz_duration_segment
+  _kronuz_status_segment
   _kronuz_git_segment
 }
 
@@ -628,7 +644,7 @@ function prompt_kronuz_setup {
 
   SPROMPT='zsh: correct $col[red]%R%f to $col[green]%r%f [nyae]? '
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
-  PROMPT="$kronuz[err] $kronuz[info]$kronuz[context]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[error]$kronuz[duration]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] \${_kronuz_osc_b}"
+  PROMPT="\${_prompt_kronuz_status}$kronuz[err] $kronuz[info]$kronuz[context]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] \${_kronuz_osc_b}"
 
   # Transient prompt: the caret left in scrollback for already-run commands.
   # Override the look with PROMPT_KRONUZ_TRANSIENT, or set it to '' to disable.
