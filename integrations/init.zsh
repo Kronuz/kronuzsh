@@ -81,8 +81,8 @@ if (( $+commands[eza] )); then
   export EZA_CONFIG_DIR="${EZA_CONFIG_DIR:-$KRONUZSH/integrations/eza}"
   alias ls='eza --group-directories-first --classify=auto'
   alias l='eza -1a --group-directories-first'
-  alias ll='eza -lgh --group-directories-first'
-  alias la='eza -lgha --group-directories-first'
+  alias ll='eza -lg --group-directories-first'
+  alias la='eza -lga --group-directories-first'
   alias llg='ll --git'   # long + git status (slower in big repos)
   alias lag='la --git'
   alias lt='eza -T --level=2 --group-directories-first'   # tree
