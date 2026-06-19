@@ -225,14 +225,15 @@ Three variables control it:
 |--------------------------------|--------------------|---------------------------------------------------|
 | `PROMPT_KRONUZ_TRANSIENT`      | a faded `❯`        | The collapsed prompt string. Set to `''` to disable transience entirely (past prompts stay full). |
 | `PROMPT_KRONUZ_TRANSIENT_STYLE`| `dim`              | How the just-run **command** is restyled in the collapsed line: `dim`, `mute`, or `keep`. |
-| `PROMPT_KRONUZ_TRANSIENT_DIM`  | `0.99`             | For `dim`: darkness factor, `0` = black, `1` = unchanged. Lower is darker. |
+| `PROMPT_KRONUZ_TRANSIENT_DIM`  | `0.7`              | For `dim`: darkness factor, `0` = black, `1` = unchanged. Lower is darker. |
 | `PROMPT_KRONUZ_TRANSIENT_HL`   | `fg=8`             | For `mute`: the `region_highlight` spec to paint the command with (default = grey). |
 
 The three styles:
 
 - **`dim`** keeps the command's own syntax colors but darkens them, so the line
-  reads as faded history without losing its shape. The default factor (`0.99`) is
-  intentionally gentle; try `0.5` to `0.7` for a clearly dimmer look. To darken the
+  reads as faded history without losing its shape. The default factor (`0.7`) is a
+  moderate fade; go lower (`0.4` to `0.5`) for darker, higher (`0.85`+) for subtler.
+  To darken the
   right hue, the prompt queries your terminal's real 16 ANSI colors once at startup
   (via an OSC 4 query), falling back to the xterm defaults if the terminal doesn't
   answer.
@@ -294,7 +295,7 @@ through it.
 | `PROMPT_KRONUZ_CMD_DURATION_MIN` | `3` | Seconds a command must run before its duration is shown. `0` = always. |
 | `PROMPT_KRONUZ_TRANSIENT` | faded `❯` | The collapsed past-prompt string; `''` disables transience. |
 | `PROMPT_KRONUZ_TRANSIENT_STYLE` | `dim` | Restyle of the past command: `dim`, `mute`, or `keep`. |
-| `PROMPT_KRONUZ_TRANSIENT_DIM` | `0.99` | `dim` darkness factor (`0` black .. `1` unchanged). |
+| `PROMPT_KRONUZ_TRANSIENT_DIM` | `0.7` | `dim` darkness factor (`0` black .. `1` unchanged). |
 | `PROMPT_KRONUZ_TRANSIENT_HL` | `fg=8` | `mute` color, as a `region_highlight` spec. |
 | `NO_COLOR` | (unset) | Standard env var; when set, renders with no color escapes. |
 
