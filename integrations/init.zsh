@@ -15,7 +15,7 @@
 #
 # PATH timing: this file runs at .zshrc start, so any tool dir it should see
 # (~/.cargo/bin, ~/.local/bin, ...) must be on PATH already. Put that in ~/.profile
-# (sourced at login, before .zshrc), NOT in local.zsh (sourced after this file):
+# (sourced at login, before .zshrc), NOT in ~/.zshrc.local (sourced after this file):
 #   [ -r "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 #   case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) PATH="$HOME/.local/bin:$PATH"; export PATH ;; esac
 #
@@ -81,7 +81,7 @@ fi
 # before this). NB: `--git` is deliberately left off `ll`/`la` because it walks
 # git status per entry, which is slow in large/deep dirs; use `llg`/`lag` when
 # you actually want the git column. EZA_CONFIG_DIR points eza at our bundled
-# Kronuz theme (integrations/eza/theme.yml); override it in local.zsh for your own.
+# Kronuz theme (integrations/eza/theme.yml); override it in ~/.zshrc.local for your own.
 # install: brew install eza · cargo install eza
 if (( $+commands[eza] )); then
   export EZA_CONFIG_DIR="${EZA_CONFIG_DIR:-$KRONUZSH/integrations/eza}"
@@ -120,7 +120,7 @@ fi
 
 # ripgrep (`rg`): a faster `grep` for code. Nothing to wire into the shell; it
 # works out of the box and reads an optional config from $RIPGREP_CONFIG_PATH
-# if you want defaults (set it in local.zsh).
+# if you want defaults (set it in ~/.zshrc.local).
 # install: brew install ripgrep · cargo install ripgrep · apt/dnf install ripgrep
 #
 # git-delta is configured in git, not zsh (so you get navigate, line numbers,

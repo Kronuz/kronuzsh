@@ -5,7 +5,8 @@ it. It's a single self-contained theme in [`prompt.zsh`](prompt.zsh), no framewo
 For the internals (how the deferred strings render, how to add a segment), see the
 "prompt" section of [`AGENTS.md`](AGENTS.md); this file is the user-facing manual.
 
-Every option is an environment variable you set in `local.zsh` (git-ignored). All
+Every option is an environment variable you set in `~/.zshrc.local` (in your home
+dir, never committed). All
 of them are optional: out of the box the prompt auto-detects your terminal, font,
 OS, and session and does the right thing.
 
@@ -47,7 +48,7 @@ container badge, and an `etctl:<name>` tag inside an Eternal Terminal session.
 
 ## Quick start
 
-The tweaks people reach for first, all in `local.zsh`:
+The tweaks people reach for first, all in `~/.zshrc.local`:
 
 ```zsh
 # No Nerd Font installed? Flip the whole prompt to plain-Unicode glyphs:
@@ -269,7 +270,7 @@ The three styles:
   for `PROMPT_KRONUZ_PALETTE_TTL`); if nothing answers it falls back to the xterm
   defaults. Over a remote shell (e.g. SSH or Eternal Terminal) the query round-trip is
   network-bound, so the cache and a generous `PROMPT_KRONUZ_PALETTE_TIMEOUT` matter; if
-  your terminal still can't be queried, just pin the 16 base colors in `local.zsh`
+  your terminal still can't be queried, just pin the 16 base colors in `~/.zshrc.local`
   (which also fixes the displayed colors, and skips the query entirely):
 
   ```zsh
@@ -354,4 +355,4 @@ through it.
 | `NO_COLOR` | (unset) | Standard env var; when set, renders with no color escapes. |
 
 Anything not set falls back to the built-in default, and every variable is read
-live, so editing `local.zsh` and starting a new shell is all it takes.
+live, so editing `~/.zshrc.local` and starting a new shell is all it takes.

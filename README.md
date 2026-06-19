@@ -40,7 +40,7 @@ Nerd Font and point your terminal at it — e.g.
 
 Without a Nerd Font, flip the whole prompt to plain-Unicode glyphs that render in
 a normal font: set `PROMPT_KRONUZ_NERD_FONT=0` (also accepts `no`/`off`/`false`) in
-`local.zsh`. You can also retune individual glyphs (in either mode) via
+`~/.zshrc.local`. You can also retune individual glyphs (in either mode) via
 `PROMPT_KRONUZ_GLYPH_<NAME>` — set one to a character of your choice, or to `''` to
 hide it (e.g. `PROMPT_KRONUZ_GLYPH_MODIFIED='*'`). See the glyph table in
 [Prompt.md](Prompt.md#glyphs) for the full list of names and both default sets.
@@ -73,16 +73,18 @@ tracked `runcoms/zshrc` directly, and `$KRONUZSH` self-resolves through them.
 Two tiers, by language:
 
 - **`~/.profile`** — cross-shell env (PATH, exports) in POSIX **sh**, shared by
-  bash, sh, and zsh; `runcoms/zprofile` sources it for zsh login shells.
-- **`local.zsh`** — zsh-only machine tweaks (zstyles, the `PROMPT_KRONUZ_COLOR_HOST`
-  override, the `_kronuz_os` glyph, tool hooks like `direnv`). Copy the template;
-  it's git-ignored:
+  bash, sh, and zsh; `runcoms/zprofile` sources it for zsh login shells. Put anything
+  that puts a tool on PATH (cargo, `~/.local/bin`, ...) here, so it's set before
+  `.zshrc` runs and `integrations/init.zsh` can detect the tool.
+- **`~/.zshrc.local`** — zsh-only interactive machine tweaks (the
+  `PROMPT_KRONUZ_COLOR_HOST` and other `PROMPT_KRONUZ_*` overrides, zstyles, tool
+  hooks like `direnv`). Sourced last, if present. Copy the template and edit:
 
   ```bash
-  cp ~/.config/kronuzsh/local.zsh.example ~/.config/kronuzsh/local.zsh
+  cp ~/.config/kronuzsh/zshrc.local.example ~/.zshrc.local
   ```
 
-`~/.zshrc.local` is also sourced if present. `/etc/profile` is left to the system.
+`/etc/profile` is left to the system.
 
 ## gitstatusd (the git prompt engine)
 
@@ -162,7 +164,7 @@ integrations/      optional external tools, guarded (see Integrations.md)
   bat/themes/        Kronuz.tmTheme for bat + delta (built into bat's cache)
 prompt.zsh         the Kronuz prompt (OS glyph, gitstatus, ...; see Prompt.md)
 plugins.zsh        plugin loader
-local.zsh.example  machine-local template (real local.zsh is git-ignored)
+zshrc.local.example  machine-local template (copy to ~/.zshrc.local)
 plugins/           vendored plugins (git submodules)
 ```
 

@@ -3,11 +3,11 @@
 # (filekinds, perms, size, owner, dates, git) in calm, varied tones. Nothing
 # bold. NOTE: per-extension *filename* colors do NOT come from here, eza takes
 # those from $LS_COLORS / $EZA_COLORS (its built-in defaults are the loud bold
-# ones); set EZA_COLORS in local.zsh to recolor file extensions.
+# ones); set EZA_COLORS in ~/.zshrc.local to recolor file extensions.
 #
 # eza auto-loads this when $EZA_CONFIG_DIR points at this directory;
 # integrations.zsh sets that to $KRONUZSH/eza. Edit freely, or point
-# EZA_CONFIG_DIR elsewhere in local.zsh to use your own.
+# EZA_CONFIG_DIR elsewhere in ~/.zshrc.local to use your own.
 colourful: true
 
 filekinds:

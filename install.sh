@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # kronuzsh installer. Symlinks the runcoms into $HOME, backs up anything it
-# replaces, inits the plugin submodules, and seeds local.zsh. Idempotent: safe
+# replaces, and inits the plugin submodules. Idempotent: safe
 # to re-run.
 #
 #   ./install.sh              install / refresh
@@ -15,11 +15,6 @@ stamp="$(date +%Y%m%d%H%M%S)"
 
 install() {
   git -C "$here" submodule update --init --recursive --quiet || true
-
-  if [[ ! -e "$here/local.zsh" && -e "$here/local.zsh.example" ]]; then
-    cp "$here/local.zsh.example" "$here/local.zsh"
-    echo "seeded local.zsh from the example"
-  fi
 
   local rc target link
   for rc in "${runcoms[@]}"; do
@@ -43,6 +38,7 @@ install() {
 
   echo
   echo "done. start a fresh shell:  exec zsh"
+  echo "personal tweaks (optional):  cp $here/zshrc.local.example ~/.zshrc.local"
 }
 
 uninstall() {

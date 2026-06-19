@@ -175,7 +175,7 @@ function _kronuz_query_palette {
 # seconds, default a day, per terminal; TTL=0 disables it) or a one-off OSC 4 query.
 # Per-colour $PROMPT_KRONUZ_PALETTE_<NAME> overrides then win on top (never cached); if
 # all 16 are overridden the terminal is never queried at all. Run once from the first
-# precmd, so overrides / TTL / timeout set in local.zsh are in effect.
+# precmd, so overrides / TTL / timeout set in ~/.zshrc.local are in effect.
 function _kronuz_load_palette {
   emulate -L zsh -o extendedglob
   zmodload zsh/datetime 2>/dev/null
@@ -210,7 +210,7 @@ function _kronuz_load_palette {
     fi
   fi
 
-  # Per-colour overrides win (from local.zsh); resolved to RGB, never cached.
+  # Per-colour overrides win (from ~/.zshrc.local); resolved to RGB, never cached.
   for name in ${(k)_kronuz_basic}; do
     ov="PROMPT_KRONUZ_PALETTE_${name:u}"; [[ -n "${(P)ov}" ]] || continue
     _kronuz_color_rgb "${(P)ov}"
@@ -381,7 +381,7 @@ function prompt_kronuz_glyphs {
       glyph_pad[$name]=''
     fi
   done
-  # Legacy override: an explicit $_kronuz_os (set in local.zsh) wins for the OS glyph.
+  # Legacy override: an explicit $_kronuz_os (set in ~/.zshrc.local) wins for the OS glyph.
   (( ${+_kronuz_os} )) && glyph[os]="$_kronuz_os"
 }
 
@@ -672,7 +672,7 @@ function prompt_kronuz_precmd {
   prompt_kronuz_colors
   prompt_kronuz_glyphs
   # Load the dim palette once, here rather than in setup, so any PROMPT_KRONUZ_PALETTE_*
-  # override / TTL / timeout from local.zsh (sourced after setup) is in effect.
+  # override / TTL / timeout from ~/.zshrc.local (sourced after setup) is in effect.
   if (( ! ${_kronuz_pal_loaded:-0} )); then
     _kronuz_pal_loaded=1
     [[ "${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}" != (keep|none|off|mute|grey|gray) ]] && _kronuz_load_palette
@@ -798,7 +798,7 @@ function prompt_kronuz_setup {
       return ret
     }
   fi
-  # The dim palette is loaded lazily on the first precmd (so local.zsh, sourced after
+  # The dim palette is loaded lazily on the first precmd (so ~/.zshrc.local, sourced after
   # setup, can configure it); re-arm that one-shot here in case setup is re-run.
   _kronuz_pal_loaded=0
 }

@@ -69,7 +69,7 @@ accepts either name.
 
 Recursive and `.gitignore`-aware by default, and very fast on big trees. Nothing
 to wire in, it just works; point `$RIPGREP_CONFIG_PATH` at a config file in
-`local.zsh` if you want defaults.
+`~/.zshrc.local` if you want defaults.
 
 ### [git-delta](https://github.com/dandavison/delta) — a pager for git diffs
 
@@ -86,7 +86,7 @@ the `ls`/`l`/`ll`/`la`/`lt` aliases (plus `llg`/`lag` for the slower git column,
 left off the defaults because it walks git status per entry). Uses the bundled
 Kronuz UI theme
 ([`integrations/eza/theme.yml`](integrations/eza/theme.yml)); override with
-`EZA_CONFIG_DIR` in `local.zsh`.
+`EZA_CONFIG_DIR` in `~/.zshrc.local`.
 
 > Note: theme.yml controls eza's **columns** (perms, size, owner, dates, git).
 > Per-file **name** colors (by extension) come from `$LS_COLORS` / `$EZA_COLORS`
@@ -167,7 +167,7 @@ anywhere Rust does (crate names: `du-dust`, `procs`, `tokei`, `sd`, ...). lazygi
 yq, duf, glow, and xh are Go; grab their prebuilt release binaries. Both
 `~/.cargo/bin` and `~/.local/bin` need to be on `$PATH` **before `.zshrc` runs**, so
 `integrations/init.zsh` can detect what's there: put them in `~/.profile` (sourced at
-login, before `.zshrc`), not in `local.zsh` (sourced after):
+login, before `.zshrc`), not in `~/.zshrc.local` (sourced after):
 
 ```sh
 # ~/.profile

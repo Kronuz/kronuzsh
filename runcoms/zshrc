@@ -25,9 +25,8 @@ prompt_kronuz_setup
 # not inside prompt_kronuz_setup, which uses LOCAL_OPTIONS and would revert it.
 setopt PROMPT_SUBST PROMPT_PERCENT PROMPT_CR PROMPT_SP
 
-# Machine-local, non-public config (tool hooks, corp URLs, PATH tweaks).
-# Tracked example: local.zsh.example. Real file is git-ignored.
-[[ -r "$KRONUZSH/local.zsh" ]] && source "$KRONUZSH/local.zsh"
+# Machine-local, non-public config (tool hooks, corp URLs, PROMPT_KRONUZ_* overrides).
+# Tracked example: zshrc.local.example. The real ~/.zshrc.local is yours, in $HOME.
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
 # An absent optional file above leaves $? = 1 (the failed `[[ -r ]]` test), which

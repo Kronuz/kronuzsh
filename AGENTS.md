@@ -33,7 +33,7 @@ self-resolves from `runcoms/zshrc` via `${(%):-%x}:A:h:h`.
   sources the modules below. `runcoms/zlogin`: bg-compiles the compdump.
 - `runcoms/zshrc` order: `zshenv → options → history → completion → keybindings →
   aliases → terminal → plugins → prompt → prompt_kronuz_setup`, then `setopt
-  PROMPT_SUBST`, then `local.zsh` and `~/.zshrc.local`.
+  PROMPT_SUBST`, then `~/.zshrc.local`.
 
 The bar for adding anything: keep only the **genuinely useful** part, lean and in
 an obviously-named file, and prefer zsh-native over a vendored module (that's why
@@ -76,7 +76,7 @@ things make it work; keep both intact:
 
 So `col[branch]` already holds the final escape; segments embed it deferredly as
 `\${col[branch]}` (or read it at runtime via `${(e)col[branch]}`), and any semantic
-colour is overridable by exporting `PROMPT_KRONUZ_COLOR_<NAME>` (e.g. in `local.zsh`).
+colour is overridable by exporting `PROMPT_KRONUZ_COLOR_<NAME>` (e.g. in `~/.zshrc.local`).
 An explicit override colours even in no-colour mode, matching the glyph overrides.
 
 **Truecolor / degradation.** `prompt_kronuz_setup` checks `$COLORTERM`
@@ -103,7 +103,7 @@ change. (The old prezto theme tinted the host by `$ET_VERSION`; that wasn't port
 ### Glyphs (Nerd Font, with a plain fallback)
 
 `prompt_kronuz_glyphs` builds a global `glyph[<name>]` array, recomputed every
-`precmd` (like the colors) so `local.zsh` overrides take effect. It holds two
+`precmd` (like the colors) so `~/.zshrc.local` overrides take effect. It holds two
 default tables — a Nerd Font set and a plain-Unicode set — picked by
 `PROMPT_KRONUZ_NERD_FONT` (default on; `0`/`no`/`off`/`false` selects the plain
 set, which renders in any font via normal fallback). On top of the chosen table,
@@ -153,7 +153,7 @@ restored in precmd; it also restyles the just-run command per
 `PROMPT_KRONUZ_TRANSIENT_STYLE` — `dim` (darken each fg to truecolor hex, since zsh
 `region_highlight` has no faint attribute; the 16 ANSI colours' RGB are loaded into
 `$_kronuz_pal` by `_kronuz_load_palette`, run once from the **first precmd** (not setup,
-so `local.zsh` can configure it): an on-disk cache
+so `~/.zshrc.local` can configure it): an on-disk cache
 (`$XDG_CACHE_HOME/kronuzsh/palette-<term>`, kept `$PROMPT_KRONUZ_PALETTE_TTL`s, per
 terminal) else an OSC 4 query `_kronuz_query_palette` (budget
 `$PROMPT_KRONUZ_PALETTE_TIMEOUT`, default 0.6s, so a remote/slow link still answers; a
