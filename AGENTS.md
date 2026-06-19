@@ -13,7 +13,7 @@ dependencies were replaced with small native pieces:
 | --- | --- |
 | `git-info` + `async` worker | gitstatus (gitstatusd) + a direct-`git` fallback |
 | `python-info` (venv) | `_kronuz_venv_segment` ($VIRTUAL_ENV) |
-| `editor-info` (keymap) | `_kronuz_editor_info` (zle hooks) |
+| `editor-info` (keymap) | `_kronuz_keymap_update` (zle hooks) |
 | `prompt-pwd` | `${(%):-%~}` in precmd |
 | `spectrum` ($col) | the `col` palette is defined inline in `prompt.zsh` |
 
@@ -119,7 +119,7 @@ char in a comment.
 Each segment is a deferred string `kronuz[x]="${(e)PROMPT_KRONUZ_X:-$DEFAULT_PROMPT_KRONUZ_X}"`,
 and `PROMPT`/`RPROMPT` splice the `$kronuz[...]` together. Dynamic data is computed
 in `prompt_kronuz_precmd` (pwd, venv, git) into vars the deferred strings read
-(`_prompt_kronuz_pwd`, `python_info[virtualenv]`, `_prompt_kronuz_git`).
+(`_prompt_kronuz_pwd`, `_kronuz_venv`, `_prompt_kronuz_git`).
 
 Current layout:
 `PROMPT = status err info context etctl git venv jobs \n time pwd prompt`
@@ -206,7 +206,7 @@ the load order (fast-syntax-highlighting stays last). Bind keys after sourcing.
 - **gitstatusd needs a tty** (job control). In a no-tty `zsh -ic` it won't start and
   the fallback runs; test the real daemon in a terminal (or an etctl VM pty).
 - The **vi/emacs keymap arrow** (`❯`) is set by a `zle-line-init` hook, so it only
-  shows in a live ZLE. To preview it: set `editor_info[keymap]` from the
+  shows in a live ZLE. To preview it: set `_kronuz_keymap` from the
   `:kronuz:editor:keymap:primary` zstyle and re-render.
 
 ## gitstatusd deployment
