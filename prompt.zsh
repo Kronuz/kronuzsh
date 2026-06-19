@@ -386,6 +386,9 @@ function _kronuz_dim_col {
 # copy the transient prompt leaves in scrollback. Empty (no line) on a quick, clean command.
 function _kronuz_status_segment {
   _prompt_kronuz_status='' _prompt_kronuz_status_dim=''
+  # Only after a real command ran (preexec fired). An empty Enter leaves $? unchanged,
+  # so without this it would re-show and re-keep the previous command's exit code.
+  (( ${_kronuz_cmd_ran:-0} )) || return
   local out='' dim='' body sp REPLY
   if (( ${_kronuz_last_exit:-0} != 0 )); then
     body="${glyph[return]} ${_kronuz_last_exit}"
@@ -398,13 +401,14 @@ function _kronuz_status_segment {
     _kronuz_dim_col duration; dim+="${sp}${REPLY}${body}${(e)col[none]}"
   fi
   [[ -n "$out" ]] && { _prompt_kronuz_status="${out}%E"$'\n'; _prompt_kronuz_status_dim="${dim}%E"$'\n'; }
+  _kronuz_cmd_ran=0
 }
 
 # ---- command duration (preexec timer) ----
 # Show how long the last command ran, when it exceeds PROMPT_KRONUZ_CMD_DURATION_MIN
 # seconds (default 3). preexec stamps the start, precmd computes the delta.
-typeset -g _kronuz_cmd_start=0 _prompt_kronuz_duration=''
-function _kronuz_duration_preexec { _kronuz_cmd_start=${EPOCHREALTIME:-0} }
+typeset -g _kronuz_cmd_start=0 _prompt_kronuz_duration='' _kronuz_cmd_ran=0
+function _kronuz_duration_preexec { _kronuz_cmd_start=${EPOCHREALTIME:-0}; _kronuz_cmd_ran=1 }
 function _kronuz_duration_fmt {
   local -F e=$1
   local -i t=$1
