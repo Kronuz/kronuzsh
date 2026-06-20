@@ -1,8 +1,8 @@
 # yazi: opt-in Kronuz theming. yazi reads its theme from its config dir
 # ($YAZI_CONFIG_HOME, else $XDG_CONFIG_HOME/yazi, else ~/.config/yazi), so enabling it
 # means placing files there. We ask first (kz_confirm), then symlink this theme.toml
-# plus the shared Kronuz.tmTheme (for syntect code-preview highlighting, referenced
-# relatively from theme.toml) into that dir. Backs up an existing theme.toml; idempotent;
+# plus the shared Kronuz.tmTheme (for syntect code-preview highlighting, which theme.toml
+# points at by absolute path) into that dir. Backs up an existing theme.toml; idempotent;
 # honors KRONUZ_YES / KRONUZ_NO. Sourced by ../setup.sh at install time.
 _kronuz_yazi_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd -P)"
 if command -v yazi >/dev/null 2>&1; then

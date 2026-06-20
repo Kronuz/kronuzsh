@@ -13,9 +13,11 @@
 cwd = { fg = "#6e9cbe" }
 
 # Code-preview syntax highlighting uses the shared Kronuz tmTheme (same one bat/delta
-# use). yazi/setup.sh links it next to this file in the yazi config dir; the path is
-# resolved relative to that dir.
-syntect_theme = "Kronuz.tmTheme"
+# use). yazi/setup.sh links it into the yazi config dir. yazi wants an absolute path
+# here (a relative one silently falls back to its default theme), so this points at the
+# default ~/.config/yazi — adjust it if your yazi config dir differs (custom
+# $XDG_CONFIG_HOME / $YAZI_CONFIG_HOME).
+syntect_theme = "~/.config/yazi/Kronuz.tmTheme"
 
 find_keyword  = { fg = "#e8bf6a", bold = true, italic = true }
 find_position = { fg = "#da4939", bg = "reset", bold = true, italic = true }
