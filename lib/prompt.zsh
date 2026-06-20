@@ -252,8 +252,8 @@ function prompt_kronuz_colors {
     duration   '$col[goldenrod]'
     ssh        '$col[mediumpurple]'
     container  '$col[deepskyblue]'
-    transient  '$col[darkgrey]'
-    transient_caret '%B$col[green]'
+    transmuted '$col[darkgrey]'
+    transcaret '%B$col[white]'
     action     '$col[darkorange]'
     added      '$col[darkorange]'
     ahead      '$col[chartreuse]'
@@ -514,7 +514,7 @@ function _kronuz_dim_col {
   local reply
   case "${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}" in
     keep|none|off)  REPLY="${(e)col[$1]}"; return ;;
-    mute|grey|gray) REPLY="${(e)col[transient]}"; return ;;
+    mute|grey|gray) REPLY="${(e)col[transmuted]}"; return ;;
   esac
   local esc="${(e)col[$1]}"
   if [[ "$esc" == (#b)'%F{'(*)'}' ]]; then
@@ -779,7 +779,7 @@ function prompt_kronuz_setup {
   if (( ${+PROMPT_KRONUZ_TRANSIENT} )); then
     _kronuz_transient_prompt="$PROMPT_KRONUZ_TRANSIENT"
   else
-    _kronuz_transient_prompt="\${col[transient_caret]}\${glyph[caret]}\${col[none]} "
+    _kronuz_transient_prompt="\${col[transcaret]}\${glyph[caret]}\${col[none]} "
   fi
   zle -N _kronuz_transient_accept
   bindkey '^M' _kronuz_transient_accept
