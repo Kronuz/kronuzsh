@@ -16,6 +16,45 @@ stamp="$(date +%Y%m%d%H%M%S)"
 # shellcheck source=install.lib.sh
 source "$here/install.lib.sh"
 
+# Return 0 if any of the given command names is on PATH.
+_have_any() {
+  local c
+  for c in "$@"; do
+    if command -v "$c" >/dev/null 2>&1; then return 0; fi
+  done
+  return 1
+}
+
+# Report which recommended CLI tools (the integrations.md catalog) are present, and name
+# the missing ones — without installing anything (kronuzsh wires in whatever's there).
+recommend_tools() {
+  # "<name> <command(s) to probe>"; fd/bat ship under two names on Debian.
+  local -a tools=(
+    "fd fd fdfind" "bat bat batcat" "fzf fzf" "zoxide zoxide" "ripgrep rg"
+    "git-delta delta" "eza eza" "yazi yazi" "lazygit lazygit" "hyperfine hyperfine"
+    "jq jq" "yq yq" "dust dust" "duf duf" "btop btop" "procs procs" "sd sd"
+    "tealdeer tldr" "tokei tokei" "glow glow" "xh xh"
+  )
+  local entry name total=0 have=0 missing=""
+  kz_head "Optional tools" "🧰"
+  for entry in "${tools[@]}"; do
+    name="${entry%% *}"
+    total=$((total + 1))
+    if _have_any ${entry#* }; then
+      have=$((have + 1))
+    else
+      missing="$missing $name"
+    fi
+  done
+  if [ -z "$missing" ]; then
+    kz_ok "all $total recommended CLI tools installed"
+  else
+    kz_ok "$have of $total recommended CLI tools installed"
+    kz_skip "missing:$missing"
+    kz_info "install the rest from integrations.md (per-platform matrix); KronuZSH wires in whatever's present"
+  fi
+}
+
 install() {
   kz_title "KronuZSH"
 
@@ -47,6 +86,8 @@ install() {
   # in integrations/setup.sh (prints its own "Tool integrations" heading), guarded +
   # idempotent. shellcheck source=integrations/setup.sh
   source "$here/integrations/setup.sh"
+
+  recommend_tools
 
   kz_done "Done. Start a fresh shell:  exec zsh"
   kz_info "Personal tweaks (optional):  cp $here/zshrc.local.example ~/.zshrc.local"
