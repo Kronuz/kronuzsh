@@ -34,7 +34,7 @@ install() {
   # Wire up the external-tool integrations' install-time setup (bat theme cache +
   # git-delta gitconfig). Lives in integrations/setup.sh, guarded + idempotent.
   # shellcheck source=integrations/setup.sh
-  . "$here/integrations/setup.sh"
+  source "$here/integrations/setup.sh"
 
   echo
   echo "done. start a fresh shell:  exec zsh"
