@@ -13,50 +13,62 @@ here="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 runcoms=(zshenv zprofile zshrc zlogin zlogout)
 stamp="$(date +%Y%m%d%H%M%S)"
 
-install() {
-  git -C "$here" submodule update --init --recursive --quiet || true
+# shellcheck source=install.lib.sh
+source "$here/install.lib.sh"
 
+install() {
+  kz_title "kronuzsh"
+
+  kz_head "Plugins" "🧩"
+  if git -C "$here" submodule update --init --recursive --quiet; then
+    kz_ok "plugin submodules" "initialized / up to date"
+  else
+    kz_info "submodule update skipped (no git, or offline)"
+  fi
+
+  kz_head "Shell config" "🔗"
   local rc target link
   for rc in "${runcoms[@]}"; do
     target="$here/runcoms/$rc"
     link="$HOME/.$rc"
     if [[ -L "$link" && "$(readlink "$link")" == "$target" ]]; then
-      continue  # already ours
+      kz_skip "~/.$rc" "already linked"
+      continue
     fi
     if [[ -e "$link" || -L "$link" ]]; then
       mv "$link" "$link.kronuzsh-bak.$stamp"
-      echo "backed up $link -> .${rc}.kronuzsh-bak.$stamp"
+      kz_info "backed up ~/.$rc -> ~/.$rc.kronuzsh-bak.$stamp"
     fi
     ln -s "$target" "$link"
-    echo "linked  ~/.$rc -> $target"
+    kz_ok "~/.$rc" "linked"
   done
 
-  # Wire up the external-tool integrations' install-time setup (bat theme cache +
-  # git-delta gitconfig). Lives in integrations/setup.sh, guarded + idempotent.
-  # shellcheck source=integrations/setup.sh
+  # External-tool integrations' install-time setup (theme caches, opt-in wiring). Lives
+  # in integrations/setup.sh (prints its own "Tool integrations" heading), guarded +
+  # idempotent. shellcheck source=integrations/setup.sh
   source "$here/integrations/setup.sh"
 
-  echo
-  echo "done. start a fresh shell:  exec zsh"
-  echo "personal tweaks (optional):  cp $here/zshrc.local.example ~/.zshrc.local"
+  kz_done "Done. Start a fresh shell:  exec zsh"
+  kz_info "Personal tweaks (optional):  cp $here/zshrc.local.example ~/.zshrc.local"
 }
 
 uninstall() {
+  kz_title "kronuzsh — uninstall"
   local rc link bak orig
   for rc in "${runcoms[@]}"; do
     link="$HOME/.$rc"
     if [[ -L "$link" && "$(readlink "$link")" == "$here/runcoms/$rc" ]]; then
       rm -f "$link"
-      echo "removed ~/.$rc"
+      kz_ok "removed ~/.$rc"
     fi
   done
   for bak in "$HOME"/.z*.kronuzsh-bak.*; do
     [[ -e "$bak" ]] || continue
     orig="${bak%.kronuzsh-bak.*}"
     mv -f "$bak" "$orig"
-    echo "restored $orig"
+    kz_ok "restored $orig"
   done
-  echo "uninstalled. open a new shell."
+  kz_done "Uninstalled. Open a new shell."
 }
 
 case "${1:-}" in

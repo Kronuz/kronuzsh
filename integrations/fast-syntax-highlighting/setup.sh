@@ -7,7 +7,7 @@ _kronuz_fsh_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd -P)"
 _kronuz_fsh_plugin="$_kronuz_fsh_dir/../../plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 if command -v zsh >/dev/null 2>&1 && [ -r "$_kronuz_fsh_plugin" ]; then
   if zsh -fc "source '$_kronuz_fsh_plugin'; fast-theme '$_kronuz_fsh_dir/Kronuz.ini' -q" >/dev/null 2>&1; then
-    echo "applied fast-syntax-highlighting Kronuz theme"
+    kz_ok "fast-syntax-highlighting" "Kronuz theme applied"
   fi
 fi
 unset _kronuz_fsh_dir _kronuz_fsh_plugin

@@ -19,5 +19,5 @@ if command -v git >/dev/null 2>&1; then
   if command -v bat >/dev/null 2>&1 || command -v batcat >/dev/null 2>&1; then
     git config --global delta.syntax-theme Kronuz
   fi
-  echo "configured git to use delta when available (falls back to less)"
+  kz_ok "git-delta" "wired into git (falls back to less)"
 fi
