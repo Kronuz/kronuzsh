@@ -15,34 +15,34 @@ let g:colors_name = "kronuz"
 
 
 " editor / UI
-hi Normal                 guifg=#c8c6c5 guibg=#383838 ctermfg=251 ctermbg=237 gui=NONE cterm=NONE
-hi Cursor                 guifg=#383838 guibg=#d08040 ctermfg=237 ctermbg=173 gui=NONE cterm=NONE
-hi lCursor                guifg=#383838 guibg=#d08040 ctermfg=237 ctermbg=173 gui=NONE cterm=NONE
-hi CursorLine             guifg=NONE guibg=#303030 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
-hi CursorColumn           guifg=NONE guibg=#303030 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
-hi ColorColumn            guifg=NONE guibg=#303030 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
-hi CursorLineNr           guifg=#e8bf6a guibg=#303030 ctermfg=179 ctermbg=236 gui=bold cterm=bold
-hi LineNr                 guifg=#7a7775 guibg=#383838 ctermfg=243 ctermbg=237 gui=NONE cterm=NONE
-hi SignColumn             guifg=NONE guibg=#383838 ctermfg=NONE ctermbg=237 gui=NONE cterm=NONE
-hi FoldColumn             guifg=#7a7775 guibg=#383838 ctermfg=243 ctermbg=237 gui=NONE cterm=NONE
-hi Folded                 guifg=#95815e guibg=#303030 ctermfg=101 ctermbg=236 gui=italic cterm=italic
-hi VertSplit              guifg=#4a4a4a guibg=#383838 ctermfg=239 ctermbg=237 gui=NONE cterm=NONE
-hi WinSeparator           guifg=#4a4a4a guibg=#383838 ctermfg=239 ctermbg=237 gui=NONE cterm=NONE
+hi Normal                 guifg=#c8c6c5 guibg=#2b2b2b ctermfg=251 ctermbg=235 gui=NONE cterm=NONE
+hi Cursor                 guifg=#2b2b2b guibg=#d08040 ctermfg=235 ctermbg=173 gui=NONE cterm=NONE
+hi lCursor                guifg=#2b2b2b guibg=#d08040 ctermfg=235 ctermbg=173 gui=NONE cterm=NONE
+hi CursorLine             guifg=NONE guibg=#333333 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
+hi CursorColumn           guifg=NONE guibg=#333333 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
+hi ColorColumn            guifg=NONE guibg=#333333 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
+hi CursorLineNr           guifg=#e8bf6a guibg=#333333 ctermfg=179 ctermbg=236 gui=bold cterm=bold
+hi LineNr                 guifg=#7a7775 guibg=#2b2b2b ctermfg=243 ctermbg=235 gui=NONE cterm=NONE
+hi SignColumn             guifg=NONE guibg=#2b2b2b ctermfg=NONE ctermbg=235 gui=NONE cterm=NONE
+hi FoldColumn             guifg=#7a7775 guibg=#2b2b2b ctermfg=243 ctermbg=235 gui=NONE cterm=NONE
+hi Folded                 guifg=#95815e guibg=#333333 ctermfg=101 ctermbg=236 gui=italic cterm=italic
+hi VertSplit              guifg=#4a4a4a guibg=#2b2b2b ctermfg=239 ctermbg=235 gui=NONE cterm=NONE
+hi WinSeparator           guifg=#4a4a4a guibg=#2b2b2b ctermfg=239 ctermbg=235 gui=NONE cterm=NONE
 hi StatusLine             guifg=#c8c6c5 guibg=#4a4a4a ctermfg=251 ctermbg=239 gui=NONE cterm=NONE
-hi StatusLineNC           guifg=#7a7775 guibg=#303030 ctermfg=243 ctermbg=236 gui=NONE cterm=NONE
-hi TabLine                guifg=#95815e guibg=#303030 ctermfg=101 ctermbg=236 gui=NONE cterm=NONE
-hi TabLineFill            guifg=NONE guibg=#303030 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
-hi TabLineSel             guifg=#e8bf6a guibg=#383838 ctermfg=179 ctermbg=237 gui=NONE cterm=NONE
-hi Pmenu                  guifg=#c8c6c5 guibg=#303030 ctermfg=251 ctermbg=236 gui=NONE cterm=NONE
-hi PmenuSel               guifg=#383838 guibg=#6089b4 ctermfg=237 ctermbg=67 gui=bold cterm=bold
-hi PmenuSbar              guifg=NONE guibg=#303030 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
+hi StatusLineNC           guifg=#7a7775 guibg=#333333 ctermfg=243 ctermbg=236 gui=NONE cterm=NONE
+hi TabLine                guifg=#95815e guibg=#333333 ctermfg=101 ctermbg=236 gui=NONE cterm=NONE
+hi TabLineFill            guifg=NONE guibg=#333333 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
+hi TabLineSel             guifg=#e8bf6a guibg=#2b2b2b ctermfg=179 ctermbg=235 gui=NONE cterm=NONE
+hi Pmenu                  guifg=#c8c6c5 guibg=#333333 ctermfg=251 ctermbg=236 gui=NONE cterm=NONE
+hi PmenuSel               guifg=#2b2b2b guibg=#6089b4 ctermfg=235 ctermbg=67 gui=bold cterm=bold
+hi PmenuSbar              guifg=NONE guibg=#333333 ctermfg=NONE ctermbg=236 gui=NONE cterm=NONE
 hi PmenuThumb             guifg=NONE guibg=#7a7775 ctermfg=NONE ctermbg=243 gui=NONE cterm=NONE
 hi Visual                 guifg=NONE guibg=#5a647e ctermfg=NONE ctermbg=60 gui=NONE cterm=NONE
 hi VisualNOS              guifg=NONE guibg=#5a647e ctermfg=NONE ctermbg=60 gui=NONE cterm=NONE
-hi Search                 guifg=#383838 guibg=#e8bf6a ctermfg=237 ctermbg=179 gui=NONE cterm=NONE
-hi IncSearch              guifg=#383838 guibg=#fd971f ctermfg=237 ctermbg=208 gui=NONE cterm=NONE
-hi CurSearch              guifg=#383838 guibg=#fd971f ctermfg=237 ctermbg=208 gui=NONE cterm=NONE
-hi WildMenu               guifg=#383838 guibg=#e8bf6a ctermfg=237 ctermbg=179 gui=NONE cterm=NONE
+hi Search                 guifg=#2b2b2b guibg=#e8bf6a ctermfg=235 ctermbg=179 gui=NONE cterm=NONE
+hi IncSearch              guifg=#2b2b2b guibg=#fd971f ctermfg=235 ctermbg=208 gui=NONE cterm=NONE
+hi CurSearch              guifg=#2b2b2b guibg=#fd971f ctermfg=235 ctermbg=208 gui=NONE cterm=NONE
+hi WildMenu               guifg=#2b2b2b guibg=#e8bf6a ctermfg=235 ctermbg=179 gui=NONE cterm=NONE
 hi MatchParen             guifg=#fd971f guibg=NONE ctermfg=208 ctermbg=NONE gui=bold,underline cterm=bold,underline
 hi Directory              guifg=#6089b4 guibg=NONE ctermfg=67 ctermbg=NONE gui=NONE cterm=NONE
 hi Title                  guifg=#fd971f guibg=NONE ctermfg=208 ctermbg=NONE gui=bold cterm=bold
@@ -92,7 +92,7 @@ hi Debug                  guifg=#da4939 guibg=NONE ctermfg=167 ctermbg=NONE gui=
 hi Underlined             guifg=#6089b4 guibg=NONE ctermfg=67 ctermbg=NONE gui=underline cterm=underline
 hi Ignore                 guifg=#7a7775 guibg=NONE ctermfg=243 ctermbg=NONE gui=NONE cterm=NONE
 hi Error                  guifg=#e8e6e5 guibg=#da4939 ctermfg=254 ctermbg=167 gui=NONE cterm=NONE
-hi Todo                   guifg=#383838 guibg=#e8bf6a ctermfg=237 ctermbg=179 gui=bold cterm=bold
+hi Todo                   guifg=#2b2b2b guibg=#e8bf6a ctermfg=235 ctermbg=179 gui=bold cterm=bold
 
 " diff
 hi DiffAdd                guifg=NONE guibg=#26331a ctermfg=NONE ctermbg=235 gui=NONE cterm=NONE
@@ -139,7 +139,7 @@ hi markdownBlockquote     guifg=#caa473 guibg=NONE ctermfg=179 ctermbg=NONE gui=
 
 " :terminal ANSI palette (Kronuz)
 if has("nvim")
-  let g:terminal_color_0 = "#383838"
+  let g:terminal_color_0 = "#2b2b2b"
   let g:terminal_color_1 = "#da4939"
   let g:terminal_color_2 = "#a5c261"
   let g:terminal_color_3 = "#e8bf6a"
@@ -156,6 +156,6 @@ if has("nvim")
   let g:terminal_color_14 = "#437cb9"
   let g:terminal_color_15 = "#e8e6e5"
 elseif exists("*term_setansicolors") || has("terminal")
-  let g:terminal_ansi_colors = ["#383838", "#da4939", "#a5c261", "#e8bf6a", "#6089b4", "#d687bf", "#219186", "#c8c6c5", "#7a7775", "#dc322f", "#9aa83a", "#fd971f", "#6e9cbe", "#caa473", "#437cb9", "#e8e6e5"]
+  let g:terminal_ansi_colors = ["#2b2b2b", "#da4939", "#a5c261", "#e8bf6a", "#6089b4", "#d687bf", "#219186", "#c8c6c5", "#7a7775", "#dc322f", "#9aa83a", "#fd971f", "#6e9cbe", "#caa473", "#437cb9", "#e8e6e5"]
 endif
 
