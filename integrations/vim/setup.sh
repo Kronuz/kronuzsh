@@ -47,9 +47,9 @@ _kronuz_vim_wire() {
   if [ -f "$_kronuz_rc" ] && grep -qi kronuz "$_kronuz_rc" 2>/dev/null; then
     return 0
   fi
-  if [ -n "$KRONUZ_VIM_NOAUTORC" ]; then
+  if [ -n "${KRONUZ_VIM_NOAUTORC:-}" ]; then
     _kronuz_vim_hint "$_kronuz_rc"; return 0
-  elif [ -n "$KRONUZ_VIM_AUTORC" ]; then
+  elif [ -n "${KRONUZ_VIM_AUTORC:-}" ]; then
     :
   elif [ -t 0 ] && [ -t 1 ]; then
     printf 'kronuzsh: turn on the Kronuz colorscheme in %s? [y/N] ' "$_kronuz_rc"
@@ -62,8 +62,10 @@ _kronuz_vim_wire() {
     _kronuz_vim_hint "$_kronuz_rc"; return 0
   fi
   mkdir -p "$(dirname "$_kronuz_rc")"
-  [ -f "$_kronuz_rc" ] && cp -p "$_kronuz_rc" "$_kronuz_rc.kronuz.bak" && \
+  if [ -f "$_kronuz_rc" ]; then
+    cp -p "$_kronuz_rc" "$_kronuz_rc.kronuz.bak"
     echo "kronuzsh: backed up $_kronuz_rc -> $_kronuz_rc.kronuz.bak"
+  fi
   _kronuz_vim_block "$_kronuz_lang" >> "$_kronuz_rc"
   echo "kronuzsh: enabled the Kronuz colorscheme in $_kronuz_rc"
 }
