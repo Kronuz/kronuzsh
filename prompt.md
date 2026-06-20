@@ -229,6 +229,24 @@ The Eternal Terminal session cue is the separate `etctl:<name>` tag (in magenta)
 shown whenever `$ETCTL_SESSION` is set, so you can tell at a glance which managed
 remote session a shell belongs to.
 
+### Working directory
+
+The path segment shows the full working directory with `$HOME` abbreviated to `~`
+(`~/Development/kronuzsh/integrations/bat`). `PROMPT_KRONUZ_PWD_STYLE` shortens it:
+
+| Value | Example | |
+|-------|---------|--|
+| `full` (default) | `~/Development/kronuzsh/integrations/bat` | the whole path |
+| `short` | `~/D/k/i/bat` | fish-style: each parent shrunk to its first character (a leading dot is kept, so `.config` → `.c`), the current directory in full |
+| `base` | `bat` | just the current directory's name |
+
+```zsh
+export PROMPT_KRONUZ_PWD_STYLE=short
+```
+
+For full control of the segment (a fixed prompt string, `%`-escapes), override
+`PROMPT_KRONUZ_PWD` instead — see [Replacing a whole segment](#replacing-a-whole-segment).
+
 ## Transient prompt
 
 When you press Enter, the prompt for the command you just ran collapses to a single
@@ -328,7 +346,8 @@ status line on top, formatted by `_kronuz_status_segment`.)
 # A 24-hour clock with seconds instead of the default [%*]:
 export PROMPT_KRONUZ_TIME='[%D{%H:%M:%S}]'
 
-# Just the basename of the cwd, not the full ~-path:
+# Just the basename of the cwd (or simpler: PROMPT_KRONUZ_PWD_STYLE=base; for the
+# fish-style ~/D/k/i/bat, PROMPT_KRONUZ_PWD_STYLE=short):
 export PROMPT_KRONUZ_PWD='%1~'
 ```
 
@@ -344,6 +363,7 @@ through it.
 | `PROMPT_KRONUZ_GLYPH_<NAME>` | (per glyph) | Override one glyph; `''` hides it. Names in the glyph table. |
 | `PROMPT_KRONUZ_COLOR_<NAME>` | (per color) | Override one semantic color. Names in the color table. |
 | `PROMPT_KRONUZ_<SEGMENT>` | (built-in) | Replace a segment's whole content. Names in "Replacing a whole segment". |
+| `PROMPT_KRONUZ_PWD_STYLE` | `full` | Working-directory shortening: `full`, `short` (`~/D/k/i/bat`), or `base` (current dir name). |
 | `PROMPT_KRONUZ_CMD_DURATION_MIN` | `3` | Seconds a command must run before its duration is shown. `0` = always. |
 | `PROMPT_KRONUZ_TRANSIENT` | faded `❯` | The collapsed past-prompt string; `''` disables transience. |
 | `PROMPT_KRONUZ_TRANSIENT_STYLE` | `dim` | Restyle of the past command: `dim`, `mute`, or `keep`. |

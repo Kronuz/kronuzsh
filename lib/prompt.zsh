@@ -470,6 +470,36 @@ function _kronuz_venv_segment {
   fi
 }
 
+# ---- working directory ----
+# Render $PWD into _prompt_kronuz_pwd, per PROMPT_KRONUZ_PWD_STYLE:
+#   full  (default) the whole path, home as ~      ~/Development/kronuzsh/integrations/bat
+#   short fish-style: each parent shrunk to its    ~/D/k/i/bat
+#         first char (leading dots kept), tail full
+#   base  just the current directory name          bat
+# (literal % are doubled so print -P won't expand them.)
+function _kronuz_pwd_segment {
+  local p="${(%):-%~}"
+  case "${PROMPT_KRONUZ_PWD_STYLE:-full}" in
+    base)
+      p="${p:t}"; [[ -z "$p" ]] && p='/'
+      ;;
+    short|abbrev|fish)
+      local -a parts=("${(@s:/:)p}")
+      local last="${parts[-1]}" e out=''
+      local -a head=("${(@)parts[1,-2]}")
+      for e in "${head[@]}"; do
+        [[ -z "$e" ]] && continue
+        if [[ "$e" == '~'* ]]; then out+="$e/"
+        elif [[ "$e" == .* ]]; then out+="${e[1,2]}/"
+        else out+="${e[1,1]}/"; fi
+      done
+      [[ "$p" == /* ]] && out="/$out"
+      p="${out}${last}"
+      ;;
+  esac
+  _prompt_kronuz_pwd="${p//\%/%%}"
+}
+
 # ---- LAN IP (cached; the lookup forks, so refresh at most every 10s) ----
 typeset -g _prompt_kronuz_ip='' _kronuz_ip_ts=0
 function _kronuz_ip_segment {
@@ -678,7 +708,7 @@ function prompt_kronuz_precmd {
     _kronuz_pal_loaded=1
     [[ "${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}" != (keep|none|off|mute|grey|gray) ]] && _kronuz_load_palette
   fi
-  _prompt_kronuz_pwd="${${(%):-%~}//\%/%%}"
+  _kronuz_pwd_segment
   _kronuz_venv_segment
   _kronuz_ip_segment
   _kronuz_duration_segment
