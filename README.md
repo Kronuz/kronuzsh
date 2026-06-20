@@ -110,7 +110,7 @@ into `~/.cache/gitstatus/` (from GitHub releases). Nothing is committed here.
 kronuzsh wires in a set of modern CLI tools **when they're installed**, and
 silently skips them when they aren't, so the same config works on your laptop, a
 fresh box, or a server with none of them. The wired set (fzf, fd, zoxide, bat,
-ripgrep, git-delta, eza, atuin, yazi) gets key bindings, aliases, env, or git
+ripgrep, git-delta, eza, yazi) gets key bindings, aliases, env, or git
 config; a longer list of "just run them" tools (lazygit, jq, dust, btop, ...) is
 worth having too.
 
@@ -120,7 +120,7 @@ shared Kronuz theming. The quick install:
 
 ```bash
 # macOS
-brew install fd bat fzf zoxide ripgrep git-delta eza atuin yazi
+brew install fd bat fzf zoxide ripgrep git-delta eza yazi
 
 # Debian / Ubuntu  (fd installs as `fdfind`, bat as `batcat`; init.zsh detects both)
 sudo apt install fd-find bat fzf zoxide ripgrep git-delta
@@ -163,7 +163,7 @@ lib/               modules sourced by zshrc, one per concern
 integrations/      optional external tools, one self-contained dir per tool (see Integrations.md)
   init.zsh           loader: sources each <tool>/init.zsh at shell start
   setup.sh           loader: sources each <tool>/setup.sh at install time
-  <tool>/init.zsh    per-shell wiring (fd, bat, fzf, zoxide, atuin, eza, yazi, ...)
+  <tool>/init.zsh    per-shell wiring (fd, bat, fzf, zoxide, eza, yazi, ...)
   bat/setup.sh       builds bat's theme cache; bat/themes/ holds Kronuz.tmTheme
   delta/setup.sh     wires git-delta into the global gitconfig
   eza/theme.yml      Kronuz color theme for eza (loaded via $EZA_CONFIG_DIR)

@@ -11,11 +11,11 @@ server with none of them installed. Each tool is self-contained in its own
 `integrations/<tool>/` directory — the shell wiring in `init.zsh`, the install-time
 setup (bat's theme cache, git-delta's gitconfig) in `setup.sh`, theme data
 alongside. Two thin loaders tie them together:
-[`integrations/init.zsh`](integrations/init.zsh) sources each `<tool>/init.zsh`
-explicitly (like `lib/` and the plugins, so the load order is visible — a couple
-matter, e.g. atuin after fzf), and [`integrations/setup.sh`](integrations/setup.sh)
-globs every `<tool>/setup.sh` at install (order-independent). To drop a tool, delete
-its directory and its line in `init.zsh`.
+[`integrations/init.zsh`](integrations/init.zsh) sources every `<tool>/init.zsh` and
+[`integrations/setup.sh`](integrations/setup.sh) sources every `<tool>/setup.sh`,
+both by globbing the directory — order doesn't matter, since each tool only touches
+its own env/aliases/functions. To add or drop a tool, just create or delete its
+directory; there's no list to edit.
 
 ## The short version
 
@@ -33,7 +33,7 @@ df          →  duf               readable mounts/free space
 top         →  btop              prettier, mouse-driven process monitor
 ps          →  procs             colored, searchable process list
 sed         →  sd                find/replace without the regex pain
-(history)   →  fzf / atuin       fuzzy Ctrl-R, searchable shell history
+(history)   →  fzf               fuzzy Ctrl-R search through your shell history
 (none)      →  yazi              full-screen terminal file manager
 ```
 
@@ -98,13 +98,6 @@ Kronuz UI theme
 > and eza's built-in defaults, which override theme.yml's `extensions:` map. To
 > recolor filenames, set `EZA_COLORS` (highest precedence).
 
-### [atuin](https://github.com/atuinsh/atuin) — a better shell history
-
-A SQLite-backed history with fuzzy search, stats, and optional sync. It's the one
-tool here that *competes* with fzf for **Ctrl-R**: installing it means you want
-it, so init.zsh lets it own Ctrl-R (it inits after fzf, so it wins) and passes
-`--disable-up-arrow` to keep Up/Down on the substring search.
-
 ### [yazi](https://github.com/sxyazi/yazi) — a terminal file manager
 
 A fast, full-screen file browser with previews and bulk operations. `y` opens it
@@ -144,7 +137,7 @@ Package names differ across platforms, which bites on minimal distros.
 
 ```bash
 # macOS
-brew install fd bat fzf zoxide ripgrep git-delta eza atuin yazi \
+brew install fd bat fzf zoxide ripgrep git-delta eza yazi \
              lazygit hyperfine jq yq dust duf btop procs sd tealdeer tokei glow xh
 
 # Debian / Ubuntu  (fd installs as `fdfind`, bat as `batcat` — init.zsh
