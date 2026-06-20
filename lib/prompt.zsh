@@ -253,6 +253,7 @@ function prompt_kronuz_colors {
     ssh        '$col[mediumpurple]'
     container  '$col[deepskyblue]'
     transient  '$col[darkgrey]'
+    transient_caret '%B$col[green]'
     action     '$col[darkorange]'
     added      '$col[darkorange]'
     ahead      '$col[chartreuse]'
@@ -507,7 +508,7 @@ function _kronuz_duration_segment {
 typeset -g _prompt_kronuz_status='' _prompt_kronuz_status_dim='' _kronuz_last_exit=0
 
 # Dimmed colour escape for a palette name, per $PROMPT_KRONUZ_TRANSIENT_STYLE:
-# keep = original, mute = grey (like the caret), dim = same hue darkened. Into $REPLY.
+# keep = original, mute = one grey span, dim = same hue darkened. Into $REPLY.
 function _kronuz_dim_col {
   emulate -L zsh -o extendedglob
   local reply
@@ -778,7 +779,7 @@ function prompt_kronuz_setup {
   if (( ${+PROMPT_KRONUZ_TRANSIENT} )); then
     _kronuz_transient_prompt="$PROMPT_KRONUZ_TRANSIENT"
   else
-    _kronuz_transient_prompt="\${col[transient]}\${glyph[caret]}\${col[none]} "
+    _kronuz_transient_prompt="\${col[transient_caret]}\${glyph[caret]}\${col[none]} "
   fi
   zle -N _kronuz_transient_accept
   bindkey '^M' _kronuz_transient_accept
