@@ -1,8 +1,8 @@
-# kronuzsh
+# KronuZSH
 
-A thin, prezto-free zsh setup: my prompt, three plugins, and a small amount of
-config, with no framework underneath. It replaces a 7-years-behind prezto fork
-with something I own end to end.
+**KronuZSH** is a thin, prezto-free zsh setup: my prompt, three plugins, and a small
+amount of config, with no framework underneath. It replaces a 7-years-behind prezto
+fork with something I own end to end.
 
 It is deliberately small. The prompt is one file. Everything prezto used to give
 me that I actually use is either mine or a standalone plugin:

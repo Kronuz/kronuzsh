@@ -17,7 +17,7 @@ stamp="$(date +%Y%m%d%H%M%S)"
 source "$here/install.lib.sh"
 
 install() {
-  kz_title "kronuzsh"
+  kz_title "KronuZSH"
 
   kz_head "Plugins" "🧩"
   if git -C "$here" submodule update --init --recursive --quiet; then
@@ -53,7 +53,7 @@ install() {
 }
 
 uninstall() {
-  kz_title "kronuzsh — uninstall"
+  kz_title "KronuZSH — uninstall"
   local rc link bak orig
   for rc in "${runcoms[@]}"; do
     link="$HOME/.$rc"
