@@ -1,13 +1,21 @@
 # Kronuz theme for yazi (matches the bat/delta/eza palette).
 #
-# yazi reads its theme from $YAZI_CONFIG_HOME/theme.toml (default ~/.config/yazi/), so
-# kronuzsh can't auto-apply this without taking over your whole yazi config. To enable:
+# yazi reads its theme from its config dir ($YAZI_CONFIG_HOME, else
+# $XDG_CONFIG_HOME/yazi, else ~/.config/yazi). ../yazi/setup.sh offers to link this file
+# there at install (a [y/N] prompt), along with the shared ../themes/Kronuz.tmTheme for
+# the syntect code preview. To do it by hand instead:
 #   mkdir -p ~/.config/yazi
 #   ln -sf "$KRONUZSH/integrations/yazi/theme.toml" ~/.config/yazi/theme.toml
-# (Schema follows yazi's current [mgr] layout; tweak keys if your yazi differs.)
+#   ln -sf "$KRONUZSH/integrations/themes/Kronuz.tmTheme" ~/.config/yazi/Kronuz.tmTheme
+# (Schema follows yazi's v25+ layout; tweak keys if your yazi differs.)
 
 [mgr]
 cwd = { fg = "#6e9cbe" }
+
+# Code-preview syntax highlighting uses the shared Kronuz tmTheme (same one bat/delta
+# use). yazi/setup.sh links it next to this file in the yazi config dir; the path is
+# resolved relative to that dir.
+syntect_theme = "Kronuz.tmTheme"
 
 find_keyword  = { fg = "#e8bf6a", bold = true, italic = true }
 find_position = { fg = "#da4939", bg = "reset", bold = true, italic = true }
@@ -80,7 +88,7 @@ hovered = { fg = "#e8bf6a", underline = true }
 
 [which]
 mask            = { bg = "#454545" }
-cand            = { fg = "#9aedfe" }
+cand            = { fg = "#6e9cbe" }
 rest            = { fg = "#95815e" }
 desc            = { fg = "#e8bf6a" }
 separator       = "  "
@@ -88,7 +96,7 @@ separator_style = { fg = "#676867" }
 
 [help]
 on      = { fg = "#e8bf6a" }
-run     = { fg = "#9aedfe" }
+run     = { fg = "#a5c261" }
 hovered = { reversed = true, bold = true }
 footer  = { fg = "#c8c6c5", bg = "#383838" }
 

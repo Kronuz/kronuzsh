@@ -1,7 +1,9 @@
 # Kronuz theme for btop (matches the bat/delta/eza palette).
 #
-# btop has no env/flag to *select* a theme (it reads color_theme from btop.conf), so
-# kronuzsh can't auto-apply this without touching your config. To enable it:
+# btop has no env/flag to *select* a theme (it reads color_theme from btop.conf).
+# ../btop/setup.sh offers to wire this up at install (a [y/N] prompt): it links this file
+# into ~/.config/btop/themes/ and sets color_theme = "Kronuz" in btop.conf. To do it by
+# hand instead:
 #   mkdir -p ~/.config/btop/themes
 #   ln -sf "$KRONUZSH/integrations/btop/Kronuz.theme" ~/.config/btop/themes/
 # then in btop press Esc -> Options -> color_theme -> Kronuz (or set color_theme="Kronuz"
