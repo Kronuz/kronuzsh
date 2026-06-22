@@ -1,4 +1,4 @@
-# install.lib.sh — shared output + prompt helpers for the kronuzsh installer and the
+# install.lib.sh — shared output + prompt helpers for the KronuZSH installer and the
 # integrations' install-time setup steps. One small, consistent style: a title, bold
 # section headings, and ✓/· status lines, plus a y/N prompt (kz_confirm). Everything
 # degrades to plain text when stdout isn't a TTY or NO_COLOR is set, so a piped or

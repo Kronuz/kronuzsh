@@ -1,6 +1,6 @@
 # External Tools
 
-A catalog of the modern CLI tools kronuzsh knows how to use. They fall into two
+A catalog of the modern CLI tools KronuZSH knows how to use. They fall into two
 groups: **modern replacements** for classic Unix commands (faster, friendlier,
 colored) and **new capabilities** that never had a classic equivalent.
 
@@ -63,7 +63,7 @@ interactively. The real `cd` and `AUTO_CD` are left untouched.
 
 ### [bat](https://github.com/sharkdp/bat) — a `cat` with syntax highlighting
 
-Line numbers, a git change gutter, and language detection. kronuzsh uses it where
+Line numbers, a git change gutter, and language detection. KronuZSH uses it where
 it clearly helps (as the **man pager** and fzf's file preview) without shadowing
 `cat`. Themed with Kronuz: `setup.sh` builds bat's cache with the bundled theme
 ([`integrations/themes/Kronuz.tmTheme`](integrations/themes/Kronuz.tmTheme))
@@ -205,7 +205,7 @@ Each of these is set only as a default (`${VAR:-...}`), so your own value in
 `~/.zshrc.local` wins.
 
 Three tools pick their theme from their *own* config file (no env to override), so
-kronuzsh can't theme them through the environment. Instead `setup.sh` **offers to wire
+KronuZSH can't theme them through the environment. Instead `setup.sh` **offers to wire
 them up** at install (a `[y/N]` prompt each, like vim; default No, honoring
 `KRONUZ_YES` / `KRONUZ_NO`), placing files non-destructively (backing up anything it
 replaces, idempotent):

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# kronuzsh installer. Symlinks the runcoms into $HOME, backs up anything it
+# KronuZSH installer. Symlinks the runcoms into $HOME, backs up anything it
 # replaces, and inits the plugin submodules. Idempotent: safe
 # to re-run.
 #
@@ -26,7 +26,7 @@ _have_any() {
 }
 
 # Report which recommended CLI tools (the integrations.md catalog) are present, and name
-# the missing ones — without installing anything (kronuzsh wires in whatever's there).
+# the missing ones — without installing anything (KronuZSH wires in whatever's there).
 recommend_tools() {
   # "<name> <command(s) to probe>"; fd/bat ship under two names on Debian.
   local -a tools=(

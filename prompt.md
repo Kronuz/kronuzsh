@@ -1,6 +1,6 @@
 # The Prompt
 
-A reference for everything the kronuzsh prompt shows and every knob that changes
+A reference for everything the KronuZSH prompt shows and every knob that changes
 it. It's a single self-contained theme in [`lib/prompt.zsh`](lib/prompt.zsh), no framework.
 For the internals (how the deferred strings render, how to add a segment), see the
 "prompt" section of [`AGENTS.md`](AGENTS.md); this file is the user-facing manual.
@@ -20,7 +20,7 @@ on top, then the info line, then the line you type on:
 ```
 ⏎ 1  3.2s
 ● gmendezb at host.example.com (10.0.0.5)  ⎇ main ⇡1 ✛2 ✴3  venv myproj
-[16:26:02] ~/Development/kronuzsh ❯❯❯
+[16:26:02] ~/Development/KronuZSH ❯❯❯
 ```
 
 Read top to bottom:
@@ -232,11 +232,11 @@ remote session a shell belongs to.
 ### Working directory
 
 The path segment shows the full working directory with `$HOME` abbreviated to `~`
-(`~/Development/kronuzsh/integrations/bat`). `PROMPT_KRONUZ_PWD_STYLE` shortens it:
+(`~/Development/KronuZSH/integrations/bat`). `PROMPT_KRONUZ_PWD_STYLE` shortens it:
 
 | Value | Example | |
 |-------|---------|--|
-| `full` (default) | `~/Development/kronuzsh/integrations/bat` | the whole path |
+| `full` (default) | `~/Development/KronuZSH/integrations/bat` | the whole path |
 | `short` | `~/D/k/i/bat` | fish-style: each parent shrunk to its first character (a leading dot is kept, so `.config` → `.c`), the current directory in full |
 | `base` | `bat` | just the current directory's name |
 

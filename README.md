@@ -57,8 +57,8 @@ see [nerd_fonts.md](nerd_fonts.md).
 ## Install
 
 ```bash
-git clone --recursive https://github.com/Kronuz/kronuzsh.git ~/.config/kronuzsh
-cd ~/.config/kronuzsh && ./install.sh
+git clone --recursive https://github.com/Kronuz/KronuZSH.git ~/.config/KronuZSH
+cd ~/.config/KronuZSH && ./install.sh
 exec zsh
 ```
 
@@ -81,7 +81,7 @@ Two tiers, by language:
   hooks like `direnv`). Sourced last, if present. Copy the template and edit:
 
   ```bash
-  cp ~/.config/kronuzsh/zshrc.local.example ~/.zshrc.local
+  cp ~/.config/KronuZSH/zshrc.local.example ~/.zshrc.local
   ```
 
 `/etc/profile` is left to the system.
@@ -98,7 +98,7 @@ into `~/.cache/gitstatus/` (from GitHub releases). Nothing is committed here.
   binary from a machine that could download it:
 
   ```bash
-  ~/.config/kronuzsh/plugins/gitstatus/build -w   # compile gitstatusd locally
+  ~/.config/KronuZSH/plugins/gitstatus/build -w   # compile gitstatusd locally
   # or: scp host:~/.cache/gitstatus/gitstatusd-linux-x86_64 ~/.cache/gitstatus/
   ```
 
@@ -107,7 +107,7 @@ into `~/.cache/gitstatus/` (from GitHub releases). Nothing is committed here.
 
 ## External tools
 
-kronuzsh wires in a set of modern CLI tools **when they're installed**, and
+KronuZSH wires in a set of modern CLI tools **when they're installed**, and
 silently skips them when they aren't, so the same config works on your laptop, a
 fresh box, or a server with none of them. The wired set (fzf, fd, zoxide, bat,
 ripgrep, git-delta, eza, yazi) gets key bindings, aliases, env, or git

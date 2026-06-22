@@ -1,4 +1,4 @@
-# AGENTS.md: working on kronuzsh
+# AGENTS.md: working on KronuZSH
 
 A thin, prezto-free zsh setup. Read `README.md` for what it is and how to install
 it; this file is how to **extend** it without breaking the prompt.
@@ -213,7 +213,7 @@ the load order (fast-syntax-highlighting stays last). Bind keys after sourcing.
 - **Sandbox** (doesn't touch the real shell):
   `ZDOTDIR=. HISTFILE=/tmp/kz-hist zsh -i`.
 - **Render the prompt the real way — in a pty.** The reliable test is an actual
-  interactive shell: a fresh `etctl open` to a host where kronuzsh is installed
+  interactive shell: a fresh `etctl open` to a host where KronuZSH is installed
   shows the live prompt (and starts `gitstatusd`, which needs a tty), or a local
   pty (`script -q /dev/null zsh -i`, or a Python `pty.fork`).
 - **Beware the false positive.** `prompt_kronuz_precmd; print -rP -- "${(e)PROMPT}"`
