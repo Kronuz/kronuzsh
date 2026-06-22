@@ -3,9 +3,10 @@
 # (filekinds, perms, size, owner, dates, git) in calm, varied tones. Nothing
 # bold. NOTE: eza reads $LS_COLORS and it OVERRIDES the `filekinds` colours below
 # for the *filename* (precedence: $EZA_COLORS > $LS_COLORS > this file). So the
-# filekinds here are kept in lock-step with $LS_COLORS in KronuZSH lib/colors.zsh;
-# change one, change the other. Per-extension *filename* colours also come from
-# $LS_COLORS / $EZA_COLORS, not from here.
+# filekinds here are kept in lock-step with the `core:` block of the vivid theme
+# integrations/vivid/kronuz.yml (which generates $LS_COLORS); change one, change the
+# other. Per-extension *filename* colours also come from $LS_COLORS / $EZA_COLORS,
+# not from here.
 #
 # eza auto-loads this when $EZA_CONFIG_DIR points at this directory;
 # integrations.zsh sets that to $KRONUZSH/eza. Edit freely, or point

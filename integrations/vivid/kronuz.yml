@@ -1,0 +1,136 @@
+# Kronuz theme for vivid (github.com/sharkdp/vivid) — a rich, truecolor LS_COLORS
+# covering 500+ file types across vivid's semantic taxonomy, in the Kronuz palette.
+#
+# Regenerate the committed LS_COLORS after editing this file:
+#   cp integrations/vivid/kronuz.yml ~/.config/vivid/themes/kronuz.yml
+#   vivid generate kronuz > integrations/vivid/ls_colors
+# (lib/colors.zsh loads integrations/vivid/ls_colors, so no runtime vivid dependency.)
+#
+# Design: filekinds match eza's theme.yml (dir/link blue, exec green, pipe/socket
+# neutral, devices orange, broken red). Content categories use hues NO common filekind
+# uses, so a file's kind is never ambiguous. Source code is split into a few groups:
+# general/systems = gold, scripting = purple, functional = teal.
+
+colors:
+  bg:          "383838"
+  fg:          "c8c6c5"
+  fg_dim:      "7a7775"
+  soft:        "9a9794"
+  comment:     "95815e"
+  blue:        "6e9cbe"   # constLang  -> directories
+  blue_light:  "7ea4cc"   # mdItalic   -> symlinks
+  blue_link:   "6089b4"   # link       -> hard links / special
+  green:       "a5c261"   # string     -> executables
+  lime:        "c7d87b"   # regexp     -> office
+  orange:      "cc7833"   # keyword    -> devices
+  amber:       "c07020"   # caret      -> configuration
+  heading:     "fd971f"   # heading    -> special text (README/TODO)
+  gold:        "e8bf6a"   # func       -> source code (general)
+  gold_bright: "ffd68d"   # cls        -> images
+  tan:         "caa473"   # tag        -> video / media base
+  red:         "da4939"   # type       -> archives, broken links
+  pink:        "d687bf"   # raw        -> markup
+  purple:      "d0d0ff"   # lang       -> scripting code
+  teal:        "219186"   # ins        -> functional code, audio
+  white:       "e8e6e5"   # vari       -> special-perm foregrounds
+
+core:
+  normal_text: {}
+  regular_file: {}
+  reset_to_normal: {}
+
+  directory:               {foreground: blue}
+  symlink:                 {foreground: blue_light}
+  multi_hard_link:         {foreground: blue_link}
+
+  fifo:                    {foreground: fg_dim}
+  socket:                  {foreground: fg_dim}
+  door:                    {foreground: fg_dim}
+  block_device:            {foreground: orange}
+  character_device:        {foreground: orange}
+
+  broken_symlink:          {foreground: red, font-style: bold}
+  missing_symlink_target:  {foreground: red, font-style: bold}
+
+  setuid:                  {foreground: white, background: red}
+  setgid:                  {foreground: bg, background: gold}
+  file_with_capability:    {foreground: heading, font-style: bold}
+  sticky_other_writable:   {foreground: bg, background: green}
+  other_writable:          {foreground: blue, font-style: underline}
+  sticky:                  {foreground: white, background: blue_link}
+
+  executable_file:         {foreground: green, font-style: bold}
+
+text:
+  special:        {foreground: heading, font-style: bold}   # README, CHANGELOG
+  todo:           {foreground: heading, font-style: bold}   # TODO, FIXME
+  licenses:       {foreground: fg_dim}                        # LICENSE, COPYING
+  configuration:  {foreground: amber}                         # dotfiles, yaml, toml
+  other:          {foreground: soft}                          # plain .txt
+
+markup:
+  foreground: pink                                            # html, xml, markdown, adoc
+
+programming:
+  source:
+    foreground: gold                                          # general / systems code
+    # --- scripting / dynamic group ---
+    python:       {foreground: purple}
+    ipython:      {foreground: purple}
+    xonsh:        {foreground: purple}
+    ruby:         {foreground: purple}
+    perl:         {foreground: purple}
+    raku:         {foreground: purple}
+    php:          {foreground: purple}
+    lua:          {foreground: purple}
+    tcl:          {foreground: purple}
+    awk:          {foreground: purple}
+    sed:          {foreground: purple}
+    shell:        {foreground: purple}
+    powershell:   {foreground: purple}
+    javascript:   {foreground: purple}
+    typescript:   {foreground: purple}
+    r:            {foreground: purple}
+    julia:        {foreground: purple}
+    groovy:       {foreground: purple}
+    dart:         {foreground: purple}
+    applescript:  {foreground: purple}
+    viml:         {foreground: purple}
+    mojo:         {foreground: purple}
+    # --- functional / declarative group ---
+    haskell:      {foreground: teal}
+    agda:         {foreground: teal}
+    ocaml:        {foreground: teal}
+    fsharp:       {foreground: teal}
+    clojure:      {foreground: teal}
+    elixir:       {foreground: teal}
+    erlang:       {foreground: teal}
+    elm:          {foreground: teal}
+    scala:        {foreground: teal}
+    lisp:         {foreground: teal}
+    purescript:   {foreground: teal}
+    emacs:        {foreground: teal}
+
+  tooling:
+    foreground: comment                                       # Makefile, .gitignore, CI
+    continuous-integration: {foreground: comment, font-style: italic}
+
+media:
+  foreground: tan                                             # video, 3d (base)
+  image:  {foreground: gold_bright}
+  audio:  {foreground: teal}
+  video:  {foreground: tan}
+  fonts:  {foreground: soft}
+
+office:
+  foreground: lime                                            # docs, spreadsheets, slides
+
+archives:
+  foreground: red                                             # tar, zip, gz, rpm, jar (regular red vs bold broken)
+
+executable:
+  foreground: green
+  font-style: bold
+
+unimportant:
+  foreground: fg_dim                                          # .bak, .tmp, .swp, build artifacts
