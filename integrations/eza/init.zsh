@@ -7,11 +7,11 @@
 # install: brew install eza · cargo install eza
 if (( $+commands[eza] )); then
   export EZA_CONFIG_DIR="${EZA_CONFIG_DIR:-${0:h}}"
-  alias ls='eza --group-directories-first --classify=auto'
-  alias l='eza -1a --group-directories-first'
-  alias ll='eza -lg --group-directories-first'
-  alias la='eza -lga --group-directories-first'
+  alias ls='eza --no-quotes --group-directories-first --classify=auto'
+  alias l='eza -1a --no-quotes --group-directories-first'
+  alias ll='eza -lg --no-quotes --group-directories-first'
+  alias la='eza -lga --no-quotes --group-directories-first'
   alias llg='ll --git'   # long + git status (slower in big repos)
   alias lag='la --git'
-  alias lt='eza -T --level=2 --group-directories-first'   # tree
+  alias lt='eza -T --level=2 --no-quotes --group-directories-first'   # tree
 fi
