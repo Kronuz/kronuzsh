@@ -26,7 +26,9 @@ unsetopt FLOW_CONTROL      # Free up Ctrl-S / Ctrl-Q.
 # Group, colorize, and make matching case-/dash-insensitive.
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}' 'r:|=*' 'l:|=* r:|=*'
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# File-entry colours: read $LS_COLORS lazily (zstyle -e) so it reflects the value at
+# completion time, regardless of load order or a later ~/.zshrc.local override.
+zstyle -e ':completion:*' list-colors 'reply=( "${(@s.:.)LS_COLORS}" )'
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*:*:*:*:descriptions' format '%F{green}-- %d --%f'
 zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}-- %d (errors: %e) --%f'

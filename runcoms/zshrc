@@ -11,6 +11,7 @@ export KRONUZSH
 source "$KRONUZSH/runcoms/zshenv"   # also sourced by ~/.zshenv; harmless to repeat
 source "$KRONUZSH/lib/options.zsh"
 source "$KRONUZSH/lib/history.zsh"
+source "$KRONUZSH/lib/colors.zsh"   # canonical $LS_COLORS — before completion (it reads it)
 source "$KRONUZSH/lib/completion.zsh"
 source "$KRONUZSH/lib/keybindings.zsh"
 source "$KRONUZSH/lib/aliases.zsh"
