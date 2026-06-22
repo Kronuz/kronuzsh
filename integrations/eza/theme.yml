@@ -1,9 +1,11 @@
 # Kronuz palette for eza, derived from the Kronuz color scheme
 # (github.com/Kronuz/Kronuz-Theme). This file themes eza's UI columns
 # (filekinds, perms, size, owner, dates, git) in calm, varied tones. Nothing
-# bold. NOTE: per-extension *filename* colors do NOT come from here, eza takes
-# those from $LS_COLORS / $EZA_COLORS (its built-in defaults are the loud bold
-# ones); set EZA_COLORS in ~/.zshrc.local to recolor file extensions.
+# bold. NOTE: eza reads $LS_COLORS and it OVERRIDES the `filekinds` colours below
+# for the *filename* (precedence: $EZA_COLORS > $LS_COLORS > this file). So the
+# filekinds here are kept in lock-step with $LS_COLORS in KronuZSH lib/colors.zsh;
+# change one, change the other. Per-extension *filename* colours also come from
+# $LS_COLORS / $EZA_COLORS, not from here.
 #
 # eza auto-loads this when $EZA_CONFIG_DIR points at this directory;
 # integrations.zsh sets that to $KRONUZSH/eza. Edit freely, or point
