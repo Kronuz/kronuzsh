@@ -16,7 +16,7 @@ colourful: true
 filekinds:
   normal: {foreground: '#c8c6c5'}
   directory: {foreground: "#6e9cbe"}
-  symlink: {foreground: '#7ea4cc'}        # blue
+  symlink: {foreground: '#70c2ba'}        # turquoise (distinct from dir blue)
   executable: {foreground: '#a5c261'}     # green
   pipe: {foreground: '#7a7775'}
   block_device: {foreground: '#cc7833'}

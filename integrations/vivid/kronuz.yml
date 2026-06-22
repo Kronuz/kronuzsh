@@ -18,7 +18,7 @@ colors:
   soft:        "9a9794"
   comment:     "95815e"
   blue:        "6e9cbe"   # constLang  -> directories
-  blue_light:  "7ea4cc"   # mdItalic   -> symlinks
+  turquoise:   "70c2ba"   # (shell-only) -> symlinks (distinct from dir blue + functional teal)
   blue_link:   "6089b4"   # link       -> hard links / special
   green:       "a5c261"   # string     -> executables
   lime:        "c7d87b"   # regexp     -> office
@@ -40,7 +40,7 @@ core:
   reset_to_normal: {}
 
   directory:               {foreground: blue}
-  symlink:                 {foreground: blue_light}
+  symlink:                 {foreground: turquoise}
   multi_hard_link:         {foreground: blue_link}
 
   fifo:                    {foreground: fg_dim}
