@@ -249,18 +249,22 @@ For full control of the segment (a fixed prompt string, `%`-escapes), override
 
 ## Transient prompt
 
-When you press Enter, the prompt for the command you just ran collapses to a single
-short caret, so your scrollback is a clean column of carets and commands instead of
-a wall of repeated full prompts. The live prompt above the cursor is always the
-full one; only the past ones shrink. A command that **failed or was slow** also
-leaves its outcome line (the `⏎<code>` / duration) behind, dimmed, so scrollback
-stays a quiet log of what happened; quiet commands collapse to a bare caret.
+When you press Enter, the prompt for the command you just ran collapses to a compact
+line: the **directory it ran in**, then a short caret. So your scrollback reads as a
+column of `path ❯ command` instead of a wall of repeated full prompts, and you can see
+where each command was run. The live prompt above the cursor is always the full one;
+only the past ones shrink. A command that **failed or was slow** also leaves its outcome
+line (the `⏎<code>` / duration) behind, dimmed, so scrollback stays a quiet log of what
+happened.
+
+The collapsed path reuses your `PROMPT_KRONUZ_PWD_STYLE` (so `short`/`base` shorten it
+there too) and is drawn in the `transpwd` color.
 
 ```
-❯ cd src
-❯ make
+~/project ❯ cd src
+~/project/src ❯ make
 ⏎ 2          ← make failed; its outcome line stays, dimmed
-❯ ./run --watch
+~/project/src ❯ ./run --watch
 3.4s         ← slow; the dimmed duration stays
 ● gmendezb at host (10.0.0.5)  ⎇ main ❯❯❯        ← the live prompt, full color
 ```
@@ -269,7 +273,7 @@ Three variables control it:
 
 | Variable                       | Default            | Effect                                            |
 |--------------------------------|--------------------|---------------------------------------------------|
-| `PROMPT_KRONUZ_TRANSIENT`      | a faded `❯`        | The collapsed prompt string. Set to `''` to disable transience entirely (past prompts stay full). |
+| `PROMPT_KRONUZ_TRANSIENT`      | `pwd ❯`            | The collapsed prompt string (by default the directory the command ran in, then a caret). Set to `''` to disable transience entirely (past prompts stay full), or to any string for a custom collapsed prompt. |
 | `PROMPT_KRONUZ_TRANSIENT_STYLE`| `dim`              | How the just-run **command and the kept outcome line** are restyled in the collapsed line: `dim`, `mute`, or `keep`. |
 | `PROMPT_KRONUZ_TRANSIENT_DIM`  | `0.7`              | For `dim`: darkness factor, `0` = black, `1` = unchanged. Lower is darker. |
 | `PROMPT_KRONUZ_TRANSIENT_HL`   | `fg=8`             | For `mute`: the `region_highlight` spec to paint the command with (default = grey). |
@@ -365,7 +369,7 @@ through it.
 | `PROMPT_KRONUZ_<SEGMENT>` | (built-in) | Replace a segment's whole content. Names in "Replacing a whole segment". |
 | `PROMPT_KRONUZ_PWD_STYLE` | `full` | Working-directory shortening: `full`, `short` (`~/D/k/i/bat`), or `base` (current dir name). |
 | `PROMPT_KRONUZ_CMD_DURATION_MIN` | `3` | Seconds a command must run before its duration is shown. `0` = always. |
-| `PROMPT_KRONUZ_TRANSIENT` | faded `❯` | The collapsed past-prompt string; `''` disables transience. |
+| `PROMPT_KRONUZ_TRANSIENT` | `pwd ❯` | The collapsed past-prompt string (default: the run directory + caret); `''` disables transience. |
 | `PROMPT_KRONUZ_TRANSIENT_STYLE` | `dim` | Restyle of the past command: `dim`, `mute`, or `keep`. |
 | `PROMPT_KRONUZ_TRANSIENT_DIM` | `0.7` | `dim` darkness factor (`0` black .. `1` unchanged). |
 | `PROMPT_KRONUZ_TRANSIENT_HL` | `fg=8` | `mute` color, as a `region_highlight` spec. |

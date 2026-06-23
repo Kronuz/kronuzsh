@@ -254,6 +254,7 @@ function prompt_kronuz_colors {
     container  '$col[deepskyblue]'
     transmuted '$col[darkgrey]'
     transcaret '%B$col[white]'
+    transpwd   '%(!.$col[tomato].$col[aqua])'
     action     '$col[darkorange]'
     added      '$col[darkorange]'
     ahead      '$col[chartreuse]'
@@ -537,26 +538,36 @@ function _kronuz_duration_segment {
 # transient prompt leaves in scrollback.
 typeset -g _prompt_kronuz_status='' _prompt_kronuz_status_dim='' _kronuz_last_exit=0
 
+# Dim one colour spec (name / index / #hex) toward black by $PROMPT_KRONUZ_TRANSIENT_DIM,
+# returning #rrggbb in $REPLY. Returns 1 (and leaves $REPLY untouched) if the spec can't
+# be resolved. Shared by the command-buffer dimmer and the prompt-escape dimmer below.
+function _kronuz_dim_rgb {
+  local -a reply
+  _kronuz_color_rgb "$1"
+  (( $#reply == 3 )) || return 1
+  local -F f=${PROMPT_KRONUZ_TRANSIENT_DIM:-0.7}
+  local -i r=$(( reply[1]*f )) g=$(( reply[2]*f )) b=$(( reply[3]*f ))
+  printf -v REPLY '#%02x%02x%02x' r g b
+}
+
 # Dimmed colour escape for a palette name, per $PROMPT_KRONUZ_TRANSIENT_STYLE:
 # keep = original, mute = one grey span, dim = same hue darkened. Into $REPLY.
 function _kronuz_dim_col {
   emulate -L zsh -o extendedglob
-  local reply
   case "${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}" in
     keep|none|off)  REPLY="${(e)col[$1]}"; return ;;
     mute|grey|gray) REPLY="${(e)col[transmuted]}"; return ;;
   esac
-  local esc="${(e)col[$1]}"
-  if [[ "$esc" == (#b)'%F{'(*)'}' ]]; then
-    _kronuz_color_rgb "$match[1]"
-    if (( $#reply == 3 )); then
-      local -F f=${PROMPT_KRONUZ_TRANSIENT_DIM:-0.7}
-      local -i r=$(( reply[1]*f )) g=$(( reply[2]*f )) b=$(( reply[3]*f ))
-      local hex; printf -v hex '%02x%02x%02x' r g b
-      REPLY="%F{#$hex}"; return
-    fi
-  fi
-  REPLY="$esc"
+  # dim: darken every %F{colour} span, leaving %B / %(!..) structure intact — so a
+  # bold or root-conditional colour (transcaret, transpwd) dims correctly too, not just
+  # a bare %F{...}.
+  local -a parts=("${(@ps:%F{:)${(e)col[$1]}}")
+  local out="${parts[1]}" p spec rest
+  for p in "${(@)parts[2,-1]}"; do
+    spec="${p%%\}*}"; rest="${p#*\}}"
+    if _kronuz_dim_rgb "$spec"; then out+="%F{$REPLY}$rest"; else out+="%F{$spec}$rest"; fi
+  done
+  REPLY="$out"
 }
 function _kronuz_status_segment {
   _prompt_kronuz_status='' _prompt_kronuz_status_dim=''
@@ -646,17 +657,11 @@ function _kronuz_transient_style {
       region_highlight=("0 ${#BUFFER} ${PROMPT_KRONUZ_TRANSIENT_HL:-fg=8}") ;;
     *)
       setopt localoptions extendedglob
-      local -F factor=${PROMPT_KRONUZ_TRANSIENT_DIM:-0.7}
-      local -a out p reply; local e hex; local -i r g b
+      local -a out p; local e REPLY
       for e in "${region_highlight[@]}"; do
         p=("${(z)e}")
-        if [[ ${p[3]} = (#b)(*)fg=([^, ]##)(*) ]]; then
-          _kronuz_color_rgb "${match[2]}"
-          if (( $#reply == 3 )); then
-            r=$(( reply[1]*factor )); g=$(( reply[2]*factor )); b=$(( reply[3]*factor ))
-            printf -v hex '%02x%02x%02x' r g b
-            p[3]="${match[1]}fg=#${hex}${match[3]}"
-          fi
+        if [[ ${p[3]} = (#b)(*)fg=([^, ]##)(*) ]] && _kronuz_dim_rgb "${match[2]}"; then
+          p[3]="${match[1]}fg=${REPLY}${match[3]}"
         fi
         out+=("${p[1]} ${p[2]} ${p[3]}")
       done
@@ -667,9 +672,21 @@ function _kronuz_transient_style {
 # wrappers: clear the autosuggestion ghost ourselves (else reset-prompt bakes it into
 # scrollback), keep the dimmed status line, then accept.
 function _kronuz_transient_accept {
-  if (( ! ${_kronuz_dumb:-0} )) && [[ -n "$_kronuz_transient_prompt" ]]; then
+  if (( ! ${_kronuz_dumb:-0} )) && { (( ${_kronuz_transient_default:-0} )) || [[ -n "$_kronuz_transient_prompt" ]]; }; then
     _kronuz_prompt_full=$PROMPT _kronuz_rprompt_full=$RPROMPT
-    PROMPT="${_prompt_kronuz_status_dim}${_kronuz_transient_prompt}" RPROMPT=''
+    local tp="$_kronuz_transient_prompt"
+    if (( ${_kronuz_transient_default:-0} )); then
+      # Default: pwd + caret, both restyled like the command (dim/mute/keep via
+      # _kronuz_dim_col) so the whole collapsed line gets one consistent treatment —
+      # the caret stays white-based, the pwd keeps the live path colour, and both
+      # darken/grey together with the command.
+      local reset="${(e)col[none]}" pc cc pwdpart=''
+      _kronuz_dim_col transpwd;   pc="$REPLY"
+      _kronuz_dim_col transcaret; cc="$REPLY"
+      [[ -n "$_prompt_kronuz_pwd" ]] && pwdpart="${pc}${_prompt_kronuz_pwd}${reset} "
+      tp="${pwdpart}${cc}${(e)glyph[caret]}${reset} "
+    fi
+    PROMPT="${_prompt_kronuz_status_dim}${tp}" RPROMPT=''
     POSTDISPLAY=''
     [[ "${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}" != (keep|none|off) ]] && _kronuz_muting=1
     zle .reset-prompt
@@ -803,13 +820,16 @@ function prompt_kronuz_setup {
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
   PROMPT="\${_prompt_kronuz_status}$kronuz[err] $kronuz[info]$kronuz[context]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] \${_kronuz_osc_b}"
 
-  # Transient caret left in scrollback for past commands; $PROMPT_KRONUZ_TRANSIENT
-  # overrides it, '' disables. (if/else, not ${VAR:-default}: the default contains
-  # ${glyph[caret]}, whose braces the outer ${...} expansion would mis-match.)
+  # Transient prompt left in scrollback for past commands: by default the pwd (so history
+  # shows where each command ran) + caret, both restyled with the command per
+  # PROMPT_KRONUZ_TRANSIENT_STYLE (built per-accept in _kronuz_transient_accept).
+  # $PROMPT_KRONUZ_TRANSIENT overrides it with a literal string, '' disables transience.
   if (( ${+PROMPT_KRONUZ_TRANSIENT} )); then
     _kronuz_transient_prompt="$PROMPT_KRONUZ_TRANSIENT"
+    _kronuz_transient_default=0
   else
-    _kronuz_transient_prompt="\${col[transcaret]}\${glyph[caret]}\${col[none]} "
+    _kronuz_transient_prompt=''
+    _kronuz_transient_default=1
   fi
   zle -N _kronuz_transient_accept
   bindkey '^M' _kronuz_transient_accept

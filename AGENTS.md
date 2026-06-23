@@ -210,7 +210,10 @@ into `_prompt_kronuz_duration` when it tops `PROMPT_KRONUZ_CMD_DURATION_MIN`),
 `$_kronuz_is_iterm`, it also emits the proprietary OSC 1337 ShellIntegrationVersion
 / RemoteHost / CurrentDir), and the **transient prompt** (an accept-line
 widget on `^M`/`^J` that swaps to `$_kronuz_transient_prompt` and `reset-prompt`s,
-restored in precmd; it also restyles the just-run command per
+restored in precmd; by default it leaves the **pwd + caret** in scrollback so history
+shows where each command ran — reusing `$_prompt_kronuz_pwd` so it honors
+`PROMPT_KRONUZ_PWD_STYLE`, in the `transpwd` colour; `PROMPT_KRONUZ_TRANSIENT` overrides
+the whole string, `''` disables. It also restyles the just-run command per
 `PROMPT_KRONUZ_TRANSIENT_STYLE` — `dim` (darken each fg to truecolor hex, since zsh
 `region_highlight` has no faint attribute; the 16 ANSI colours' RGB are loaded into
 `$_kronuz_pal` by `_kronuz_load_palette`, run once from the **first precmd** (not setup,
