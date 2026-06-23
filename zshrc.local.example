@@ -52,7 +52,9 @@ PROMPT_KRONUZ_PWD_STYLE=short
 # PROMPT_KRONUZ_CMD_DURATION_MIN=5
 # Transient prompt: past prompts collapse to the run directory + a caret; '' turns it off.
 # PROMPT_KRONUZ_TRANSIENT=''
-# How the just-run command is restyled in the collapsed line: dim (default), mute, keep.
+# Swap just the collapsed caret for an emoji or any string (the rest stays the default):
+# PROMPT_KRONUZ_TRANSIENT_CARET='🚀'
+# How the whole collapsed line (pwd, caret, command) is restyled: dim (default), mute, keep.
 # PROMPT_KRONUZ_TRANSIENT_STYLE=mute
 
 # --- Tool hooks (safe here: PATH is already set up by ~/.profile) ---

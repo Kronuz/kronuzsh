@@ -553,25 +553,28 @@ function _kronuz_dim_rgb {
   printf -v REPLY '#%02x%02x%02x' r g b
 }
 
-# Dimmed colour escape for a palette name, per $PROMPT_KRONUZ_TRANSIENT_STYLE:
-# keep = original, mute = one grey span, dim = same hue darkened. Into $REPLY.
-function _kronuz_dim_col {
-  emulate -L zsh -o extendedglob
-  case "${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}" in
-    keep|none|off)  REPLY="${(e)col[$1]}"; return ;;
-    mute|grey|gray) REPLY="${(e)col[transmuted]}"; return ;;
-  esac
-  # dim: darken every %F{colour} span, leaving %B / %(!..) structure intact — so a
-  # bold or root-conditional colour (transcaret, pwd) dims correctly too, not just
-  # a bare %F{...}.
-  local -a parts=("${(@ps:%F{:)${(e)col[$1]}}")
+# Restyle a resolved escape string per $PROMPT_KRONUZ_TRANSIENT_STYLE, into $REPLY:
+# keep = unchanged; mute = recolour every %F{} span to the mute grey; dim = darken every
+# %F{} span. Both leave %B / %(!..) / text structure intact, so a bold or root-conditional
+# colour dims/mutes correctly, and it works on a whole composed line (the transient).
+function _kronuz_dim_string {
+  emulate -L zsh
+  local s=$1 style="${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}"
+  [[ "$style" == (keep|none|off) ]] && { REPLY="$s"; return }
+  local mute=0; [[ "$style" == (mute|grey|gray) ]] && mute=1
+  local grey="${(e)col[transmuted]}"
+  local -a parts=("${(@ps:%F{:)s}")
   local out="${parts[1]}" p spec rest
   for p in "${(@)parts[2,-1]}"; do
     spec="${p%%\}*}"; rest="${p#*\}}"
-    if _kronuz_dim_rgb "$spec"; then out+="%F{$REPLY}$rest"; else out+="%F{$spec}$rest"; fi
+    if (( mute )); then out+="${grey}${rest}"
+    elif _kronuz_dim_rgb "$spec"; then out+="%F{$REPLY}$rest"
+    else out+="%F{$spec}$rest"; fi
   done
   REPLY="$out"
 }
+# Restyle one palette colour by name (convenience wrapper; used by the status line).
+function _kronuz_dim_col { _kronuz_dim_string "${(e)col[$1]}"; }
 function _kronuz_status_segment {
   _prompt_kronuz_status='' _prompt_kronuz_status_dim=''
   # Only after a real command ran: a blank Enter leaves $? unchanged and must not
@@ -675,20 +678,13 @@ function _kronuz_transient_style {
 # wrappers: clear the autosuggestion ghost ourselves (else reset-prompt bakes it into
 # scrollback), keep the dimmed status line, then accept.
 function _kronuz_transient_accept {
-  if (( ! ${_kronuz_dumb:-0} )) && { (( ${_kronuz_transient_default:-0} )) || [[ -n "$_kronuz_transient_prompt" ]]; }; then
+  # Resolve the transient line: $PROMPT_KRONUZ_TRANSIENT overrides, else the default
+  # (pwd piece + the PROMPT_KRONUZ_TRANSIENT_CARET piece). `-` not `:-`, so an explicit
+  # PROMPT_KRONUZ_TRANSIENT='' disables transience while unset falls back to the default.
+  local tp="${(e)PROMPT_KRONUZ_TRANSIENT-$DEFAULT_PROMPT_KRONUZ_TRANSIENT}"
+  if (( ! ${_kronuz_dumb:-0} )) && [[ -n "$tp" ]]; then
     _kronuz_prompt_full=$PROMPT _kronuz_rprompt_full=$RPROMPT
-    local tp="$_kronuz_transient_prompt"
-    if (( ${_kronuz_transient_default:-0} )); then
-      # Default: pwd + caret, both restyled like the command (dim/mute/keep via
-      # _kronuz_dim_col) so the whole collapsed line gets one consistent treatment —
-      # the caret stays white-based, the pwd keeps the live path colour, and both
-      # darken/grey together with the command.
-      local reset="${(e)col[none]}" pc cc pwdpart=''
-      _kronuz_dim_col pwd;        pc="$REPLY"
-      _kronuz_dim_col transcaret; cc="$REPLY"
-      [[ -n "$_prompt_kronuz_pwd" ]] && pwdpart="${pc}${_prompt_kronuz_pwd}${reset} "
-      tp="${pwdpart}${cc}${(e)glyph[caret]}${reset} "
-    fi
+    _kronuz_dim_string "$tp"; tp="$REPLY"     # restyle the whole line (dim/mute/keep)
     PROMPT="${_prompt_kronuz_status_dim}${tp}" RPROMPT=''
     POSTDISPLAY=''
     [[ "${PROMPT_KRONUZ_TRANSIENT_STYLE:-dim}" != (keep|none|off) ]] && _kronuz_muting=1
@@ -823,17 +819,14 @@ function prompt_kronuz_setup {
   RPROMPT="$kronuz[overwrite]$kronuz[vim]$kronuz[emacs]"
   PROMPT="\${_prompt_kronuz_status}$kronuz[err] $kronuz[info]$kronuz[context]$kronuz[etctl]$kronuz[git]$kronuz[venv]$kronuz[jobs]$kronuz[nl]$kronuz[time] $kronuz[pwd] $kronuz[prompt] \${_kronuz_osc_b}"
 
-  # Transient prompt left in scrollback for past commands: by default the pwd (so history
-  # shows where each command ran) + caret, both restyled with the command per
-  # PROMPT_KRONUZ_TRANSIENT_STYLE (built per-accept in _kronuz_transient_accept).
-  # $PROMPT_KRONUZ_TRANSIENT overrides it with a literal string, '' disables transience.
-  if (( ${+PROMPT_KRONUZ_TRANSIENT} )); then
-    _kronuz_transient_prompt="$PROMPT_KRONUZ_TRANSIENT"
-    _kronuz_transient_default=0
-  else
-    _kronuz_transient_prompt=''
-    _kronuz_transient_default=1
-  fi
+  # Transient prompt (collapsed past prompts), symmetric to the live prompt above:
+  #   PROMPT_KRONUZ_TRANSIENT       — the whole collapsed line  (like PROMPT)
+  #   PROMPT_KRONUZ_TRANSIENT_CARET — just the caret/emoji piece (like PROMPT_KRONUZ_PROMPT)
+  # The default composes the pwd (live colour + PROMPT_KRONUZ_PWD_STYLE) and the caret;
+  # the whole line is resolved and restyled (dim/mute/keep) per-accept. An explicit
+  # PROMPT_KRONUZ_TRANSIENT='' disables transience.
+  DEFAULT_PROMPT_KRONUZ_TRANSIENT_CARET="\${col[transcaret]}\${glyph[caret]}\${col[none]}"
+  DEFAULT_PROMPT_KRONUZ_TRANSIENT="\${_prompt_kronuz_pwd:+\${col[pwd]}\${_prompt_kronuz_pwd}\${col[none]} }\${(e)PROMPT_KRONUZ_TRANSIENT_CARET:-\$DEFAULT_PROMPT_KRONUZ_TRANSIENT_CARET} "
   zle -N _kronuz_transient_accept
   bindkey '^M' _kronuz_transient_accept
   bindkey '^J' _kronuz_transient_accept

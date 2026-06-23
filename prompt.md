@@ -262,6 +262,14 @@ The collapsed path reuses your `PROMPT_KRONUZ_PWD_STYLE` (so `short`/`base` shor
 there too) and uses the live `pwd` colour (so it matches the prompt and honours
 `PROMPT_KRONUZ_COLOR_PWD`).
 
+The collapsed line is built the same way as the live prompt, and is configured
+symmetrically: `PROMPT_KRONUZ_TRANSIENT` is the whole string (like `PROMPT`) and
+`PROMPT_KRONUZ_TRANSIENT_CARET` is just the caret piece (like `PROMPT_KRONUZ_PROMPT` is
+the live caret), so you can swap the caret for an emoji without rebuilding the rest. Both
+take deferred `${...}` segments and are re-evaluated on every Enter, and the whole
+resolved line — pwd, caret, and your own `PROMPT_KRONUZ_TRANSIENT` if you set one — is
+restyled together by `PROMPT_KRONUZ_TRANSIENT_STYLE`.
+
 ```
 ~/project ❯ cd src
 ~/project/src ❯ make
@@ -275,8 +283,9 @@ Three variables control it:
 
 | Variable                       | Default            | Effect                                            |
 |--------------------------------|--------------------|---------------------------------------------------|
-| `PROMPT_KRONUZ_TRANSIENT`      | `pwd ❯`            | The collapsed prompt string (by default the directory the command ran in, then a caret). Set to `''` to disable transience entirely (past prompts stay full), or to any string for a custom collapsed prompt. |
-| `PROMPT_KRONUZ_TRANSIENT_STYLE`| `dim`              | How the just-run **command and the kept outcome line** are restyled in the collapsed line: `dim`, `mute`, or `keep`. |
+| `PROMPT_KRONUZ_TRANSIENT`      | `pwd ❯`            | The whole collapsed prompt string (by default the directory the command ran in, then a caret), built like `PROMPT` from deferred `${...}` segments. Set to `''` to disable transience entirely (past prompts stay full), or to any string for a custom collapsed prompt (which is itself restyled per `PROMPT_KRONUZ_TRANSIENT_STYLE`). |
+| `PROMPT_KRONUZ_TRANSIENT_CARET`| `❯`                | Just the caret piece of the default collapsed line — symmetric to `PROMPT_KRONUZ_PROMPT` for the live prompt. Set to an emoji or any string to change the caret without touching the rest. Ignored if you override the whole `PROMPT_KRONUZ_TRANSIENT`. |
+| `PROMPT_KRONUZ_TRANSIENT_STYLE`| `dim`              | How the collapsed line — the pwd, caret, and the just-run **command** (plus the kept outcome line) — is restyled: `dim`, `mute`, or `keep`. |
 | `PROMPT_KRONUZ_TRANSIENT_DIM`  | `0.7`              | For `dim`: darkness factor, `0` = black, `1` = unchanged. Lower is darker. |
 | `PROMPT_KRONUZ_TRANSIENT_HL`   | `fg=8`             | For `mute`: the `region_highlight` spec to paint the command with (default = grey). |
 | `PROMPT_KRONUZ_PALETTE_<NAME>`  | _(per color)_      | Override one of the 16 ANSI base colors (`RED`, `BLUE`, `LIGHTGREEN`, ...) to a `#RRGGBB` or a 0-255 index. Sets both the displayed color and the RGB `dim` darkens, so it doubles as a way to hardcode the palette when the terminal can't be queried. |
@@ -371,8 +380,9 @@ through it.
 | `PROMPT_KRONUZ_<SEGMENT>` | (built-in) | Replace a segment's whole content. Names in "Replacing a whole segment". |
 | `PROMPT_KRONUZ_PWD_STYLE` | `full` | Working-directory shortening: `full`, `short` (`~/D/k/i/bat`), `base` (current dir name), or `absolute` (`$HOME` expanded). |
 | `PROMPT_KRONUZ_CMD_DURATION_MIN` | `3` | Seconds a command must run before its duration is shown. `0` = always. |
-| `PROMPT_KRONUZ_TRANSIENT` | `pwd ❯` | The collapsed past-prompt string (default: the run directory + caret); `''` disables transience. |
-| `PROMPT_KRONUZ_TRANSIENT_STYLE` | `dim` | Restyle of the past command: `dim`, `mute`, or `keep`. |
+| `PROMPT_KRONUZ_TRANSIENT` | `pwd ❯` | The whole collapsed past-prompt string (default: the run directory + caret), built like `PROMPT`; `''` disables transience. |
+| `PROMPT_KRONUZ_TRANSIENT_CARET` | `❯` | Just the caret piece of the default collapsed line (symmetric to `PROMPT_KRONUZ_PROMPT`); set to an emoji or any string. |
+| `PROMPT_KRONUZ_TRANSIENT_STYLE` | `dim` | Restyle of the collapsed line (pwd, caret, command): `dim`, `mute`, or `keep`. |
 | `PROMPT_KRONUZ_TRANSIENT_DIM` | `0.7` | `dim` darkness factor (`0` black .. `1` unchanged). |
 | `PROMPT_KRONUZ_TRANSIENT_HL` | `fg=8` | `mute` color, as a `region_highlight` spec. |
 | `PROMPT_KRONUZ_PALETTE_<NAME>` | (per color) | Override one of the 16 ANSI base colors (`RED`, `LIGHTBLUE`, ...) to a `#RRGGBB` or 0-255 index; sets the displayed color and `dim`'s RGB. |
