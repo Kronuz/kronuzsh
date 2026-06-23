@@ -279,7 +279,8 @@ restyled together by `PROMPT_KRONUZ_TRANSIENT_STYLE`.
 ● gmendezb at host (10.0.0.5)  ⎇ main ❯❯❯        ← the live prompt, full color
 ```
 
-Three variables control it:
+These variables control it (the palette knobs `dim` relies on are described under the
+styles below, and listed in full in the option reference):
 
 | Variable                       | Default            | Effect                                            |
 |--------------------------------|--------------------|---------------------------------------------------|
@@ -288,9 +289,6 @@ Three variables control it:
 | `PROMPT_KRONUZ_TRANSIENT_STYLE`| `dim`              | How the collapsed line — the pwd, caret, and the just-run **command** (plus the kept outcome line) — is restyled: `dim`, `mute`, or `keep`. |
 | `PROMPT_KRONUZ_TRANSIENT_DIM`  | `0.7`              | For `dim`: darkness factor, `0` = black, `1` = unchanged. Lower is darker. |
 | `PROMPT_KRONUZ_TRANSIENT_HL`   | `fg=8`             | For `mute`: the `region_highlight` spec to paint the command with (default = grey). |
-| `PROMPT_KRONUZ_PALETTE_<NAME>`  | _(per color)_      | Override one of the 16 ANSI base colors (`RED`, `BLUE`, `LIGHTGREEN`, ...) to a `#RRGGBB` or a 0-255 index. Sets both the displayed color and the RGB `dim` darkens, so it doubles as a way to hardcode the palette when the terminal can't be queried. |
-| `PROMPT_KRONUZ_PALETTE_TTL`    | `86400`            | How long (seconds) the queried palette is cached on disk, per terminal. `0` disables the cache (query every shell). |
-| `PROMPT_KRONUZ_PALETTE_TIMEOUT`| `0.6`              | For `dim`: seconds to wait for the OSC 4 query to answer. Bump it if a remote/slow terminal misses the round-trip. |
 
 The three styles:
 
@@ -352,9 +350,10 @@ There's nothing to configure; it activates wherever the terminal understands it.
 Beyond colors and glyphs, you can override a segment's entire content with
 `PROMPT_KRONUZ_<SEGMENT>`. The value is a prompt string (zsh `%`-escapes and
 `$col[...]` / `$glyph[...]` references work). Available segments: `OS`, `ERR`,
-`USER`, `IP`, `HOST` (composed), `TIME`, `PWD`, `GIT`, `VENV`, `JOBS`,
-`CONTEXT`, `ETCTL`, `VIM`, `EMACS`, `OVERWRITE`, `PROMPT`. (The exit code and
-duration are no longer their own overridable segments; they're built into the
+`USER`, `IP`, `TIME`, `PWD`, `GIT`, `VENV`, `JOBS`, `CONTEXT`, `ETCTL`, `VIM`,
+`EMACS`, `OVERWRITE`, `PROMPT`. (`HOST` is composed from `USER` + `IP` and isn't
+overridable on its own — change those two, or the `host` color. The exit code and
+duration aren't their own overridable segments either; they're built into the
 status line on top, formatted by `_kronuz_status_segment`.)
 
 ```zsh
@@ -388,6 +387,11 @@ through it.
 | `PROMPT_KRONUZ_PALETTE_<NAME>` | (per color) | Override one of the 16 ANSI base colors (`RED`, `LIGHTBLUE`, ...) to a `#RRGGBB` or 0-255 index; sets the displayed color and `dim`'s RGB. |
 | `PROMPT_KRONUZ_PALETTE_TTL` | `86400` | Seconds the queried palette is cached on disk (per terminal); `0` disables the cache. |
 | `PROMPT_KRONUZ_PALETTE_TIMEOUT` | `0.6` | Seconds to wait for the OSC 4 palette answer; bump it for a slow/remote terminal. |
+| `zstyle :kronuz:editor:keymap:primary` | `❯❯❯` | The live caret in the primary keymap (emacs / vi-insert), as a zstyle `format` string. |
+| `zstyle :kronuz:editor:keymap:alternate` | `❮❮❮` | The live caret in the vi-command keymap. |
+| `zstyle :kronuz:editor:keymap:overwrite` | (overwrite glyph) | The `RPROMPT` marker shown while overwrite mode is on. |
+| `COLORTERM` | (terminal) | `24bit`/`truecolor` keeps the hex palette at 24-bit; otherwise colors degrade to 256/16 via `zsh/nearcolor`. |
+| `TERM` | (terminal) | `dumb`/`unknown`/empty forces the plain-glyph set and no color (see no-color mode). |
 | `NO_COLOR` | (unset) | Standard env var; when set, renders with no color escapes. |
 
 Anything not set falls back to the built-in default, and every variable is read
