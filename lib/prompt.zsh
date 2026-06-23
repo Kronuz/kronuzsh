@@ -254,7 +254,6 @@ function prompt_kronuz_colors {
     container  '$col[deepskyblue]'
     transmuted '$col[darkgrey]'
     transcaret '%B$col[white]'
-    transpwd   '%(!.$col[tomato].$col[aqua])'
     action     '$col[darkorange]'
     added      '$col[darkorange]'
     ahead      '$col[chartreuse]'
@@ -563,7 +562,7 @@ function _kronuz_dim_col {
     mute|grey|gray) REPLY="${(e)col[transmuted]}"; return ;;
   esac
   # dim: darken every %F{colour} span, leaving %B / %(!..) structure intact — so a
-  # bold or root-conditional colour (transcaret, transpwd) dims correctly too, not just
+  # bold or root-conditional colour (transcaret, pwd) dims correctly too, not just
   # a bare %F{...}.
   local -a parts=("${(@ps:%F{:)${(e)col[$1]}}")
   local out="${parts[1]}" p spec rest
@@ -685,7 +684,7 @@ function _kronuz_transient_accept {
       # the caret stays white-based, the pwd keeps the live path colour, and both
       # darken/grey together with the command.
       local reset="${(e)col[none]}" pc cc pwdpart=''
-      _kronuz_dim_col transpwd;   pc="$REPLY"
+      _kronuz_dim_col pwd;        pc="$REPLY"
       _kronuz_dim_col transcaret; cc="$REPLY"
       [[ -n "$_prompt_kronuz_pwd" ]] && pwdpart="${pc}${_prompt_kronuz_pwd}${reset} "
       tp="${pwdpart}${cc}${(e)glyph[caret]}${reset} "

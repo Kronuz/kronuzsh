@@ -259,7 +259,8 @@ line (the `⏎<code>` / duration) behind, dimmed, so scrollback stays a quiet lo
 happened.
 
 The collapsed path reuses your `PROMPT_KRONUZ_PWD_STYLE` (so `short`/`base` shorten it
-there too) and is drawn in the `transpwd` color.
+there too) and uses the live `pwd` colour (so it matches the prompt and honours
+`PROMPT_KRONUZ_COLOR_PWD`).
 
 ```
 ~/project ❯ cd src
